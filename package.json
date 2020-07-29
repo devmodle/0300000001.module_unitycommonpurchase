@@ -1,0 +1,12 @@
+{
+  "name": "unitymodule.common.purchase",
+  "version": "1.0.0",
+  "displayName": "UnityModule.Common.Purchase",
+  "author": {
+    "name": "dante",
+    "email": "are2341@nate.com"
+  },
+  "dependencies": {
+    "unitymodule.common": "https://gitlab.com/9tapmodule.repository/unitymodule_common_Purchase_client.git#v1.0.0"
+  }
+}
