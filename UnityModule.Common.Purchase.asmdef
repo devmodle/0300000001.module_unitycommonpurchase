@@ -1,0 +1,21 @@
+{
+    "name": "UnityModule.Common.Purchase",
+    "references": [
+        "UnityModule.Common.Define",
+        "UnityModule.Common.Access",
+        "UnityModule.Common.Extension",
+        "UnityModule.Common.Func",
+        "UnityModule.Common.Utility",
+        "UnityModule.UnityPurchasing",
+        "MessagePack"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
