@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-#if MSG_PACK_ENABLE
-using MessagePack;
-#endif			// #if MSG_PACK_ENABLE
-
 #if PURCHASE_ENABLE
 using UnityEngine.Purchasing;
 
@@ -14,9 +10,11 @@ using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Security;
 #endif			// #if RECEIPT_CHECK_ENABLE
 
-#if !MSG_PACK_ENABLE
+#if MSG_PACK_ENABLE
+using MessagePack;
+#else
 [System.Obsolete(KCDefine.U_MSG_NEED_MSG_PACK, true)]
-#endif			// #if !MSG_PACK_ENABLE
+#endif			// #if MSG_PACK_ENABLE
 
 //! 인앱 결제 관리자
 public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
