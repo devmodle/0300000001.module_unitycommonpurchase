@@ -246,41 +246,48 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 	//! 결제를 확정한다
 	public void ConfirmPurchase(string a_oID, System.Action<CPurchaseManager, string, bool> a_oCallback) {
-		CFunc.ShowLog("CPurchaseManager.ConfirmPurchase: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oID);
+		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_CONFIRM_CALLBACK, () => {
+			CFunc.ShowLog("CPurchaseManager.ConfirmPurchase: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oID);
 
-		var oProduct = this.GetProduct(a_oID);
-		bool bIsEnablePurchase = oProduct != null && oProduct.availableToPurchase;
+			var oProduct = this.GetProduct(a_oID);
+			bool bIsEnablePurchase = oProduct != null && oProduct.availableToPurchase;
 
-		if(!this.IsInit || !bIsEnablePurchase || !m_oPurchaseCallbackList.ContainsKey(a_oID)) {
-			a_oCallback?.Invoke(this, a_oID, false);
-		} else {
-			m_oStoreController.ConfirmPendingPurchase(oProduct);
-			this.PurchaseProductIDList.ExRemoveValue(a_oID);
-			
+			if(!this.IsInit || !bIsEnablePurchase || !m_oPurchaseCallbackList.ContainsKey(a_oID)) {
+				a_oCallback?.Invoke(this, a_oID, false);
+			} else {
+				m_oStoreController.ConfirmPendingPurchase(oProduct);
+				this.PurchaseProductIDList.ExRemoveValue(a_oID);
+				
 #if MSG_PACK_ENABLE
-			this.SavePurchaseProductIDs();
+				this.SavePurchaseProductIDs();
 #endif			// #if MSG_PACK_ENABLE
 
-			this.HandlePurchaseResult(a_oID, true, false, true);
+				this.HandlePurchaseResult(a_oID, true, false, true);
 
-			m_bIsPurchasing = false;
-			a_oCallback?.Invoke(this, a_oID, true);
-		}
+				m_bIsPurchasing = false;
+				a_oCallback?.Invoke(this, a_oID, true);
+			}
+		});
 	}
 
 	//! 결제 결과를 처리한다
 	private void HandlePurchaseResult(string a_oID, bool a_bIsSuccess, bool a_bIsInvokeCallback = true, bool a_bIsRemoveCallback = false) {
-		if(m_oPurchaseCallbackList.ContainsKey(a_oID)) {
-			var oCallback = m_oPurchaseCallbackList[a_oID];
+		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_RESULT_CALLBACK, () => {
+			CFunc.ShowLog("CPurchaseManager.HandlePurchaseResult: {0}, {1}, {2}, {3}",
+				KCDefine.B_LOG_COLOR_PLUGIN, a_oID, a_bIsSuccess, a_bIsInvokeCallback, a_bIsRemoveCallback);
 
-			if(a_bIsRemoveCallback) {
-				m_oPurchaseCallbackList.Remove(a_oID);
-			}
+			if(m_oPurchaseCallbackList.ContainsKey(a_oID)) {
+				var oCallback = m_oPurchaseCallbackList[a_oID];
 
-			if(a_bIsInvokeCallback) {
-				oCallback?.Invoke(this, a_oID, a_bIsSuccess);
+				if(a_bIsRemoveCallback) {
+					m_oPurchaseCallbackList.Remove(a_oID);
+				}
+
+				if(a_bIsInvokeCallback) {
+					oCallback?.Invoke(this, a_oID, a_bIsSuccess);
+				}
 			}
-		}
+		});
 	}
 	#endregion			// 함수
 
