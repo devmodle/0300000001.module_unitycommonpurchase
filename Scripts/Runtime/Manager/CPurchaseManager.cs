@@ -296,15 +296,13 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		CFunc.ShowLog("CPurchaseManager.SavePurchaseProductIDs: {0}, {1}", 
 			KCDefine.B_LOG_COLOR_PLUGIN, this.PurchaseProductIDList, this.PurchaseProductIDList.Count);
 
-		using(var oWriteStream = CAccess.GetWriteStream(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST)) {
-			var oBytes = MessagePackSerializer.Serialize<List<string>>(this.PurchaseProductIDList);
+		var oBytes = MessagePackSerializer.Serialize<List<string>>(this.PurchaseProductIDList);
 
 #if SECURITY_ENABLE
-			CFunc.WriteSecurityBytes(oWriteStream, oBytes);
+		CFunc.WriteSecurityBytes(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST, oBytes);
 #else
-			CFunc.WriteBytes(oWriteStream, oBytes);
+		CFunc.WriteBytes(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST, oBytes);
 #endif			// #if SECURITY_ENABLE
-		}
 	}
 
 	//! 결제 상품 아이디를 로드한다
