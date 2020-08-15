@@ -74,8 +74,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #if RECEIPT_CHECK_ENABLE
 			var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
 			var oReceipts = oValidator.Validate(a_oArgs.purchasedProduct.receipt);
-
-			// 유효한 영수증 일 경우
+			
 			if(oReceipts.ExIsValid()) {
 				this.HandlePurchaseResult(oID, true, true);
 			} else {
