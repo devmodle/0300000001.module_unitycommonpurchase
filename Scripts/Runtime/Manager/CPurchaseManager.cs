@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-#if PURCHASE_ENABLE
+#if PURCHASE_MODULE_ENABLE
 using UnityEngine.Purchasing;
 
 #if RECEIPT_CHECK_ENABLE
@@ -324,4 +324,4 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #endif			// #if MSG_PACK_ENABLE
 	#endregion			// 조건부 함수
 }
-#endif			// #if PURCHASE_ENABLE
+#endif			// #if PURCHASE_MODULE_ENABLE
