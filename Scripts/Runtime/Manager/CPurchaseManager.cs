@@ -58,6 +58,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		CFunc.ShowLog("CPurchaseManager.ProcessPurchase: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oArgs.purchasedProduct.definition.id);
 
 		try {
+			// 결제 중 일 경우
 			if(m_bIsPurchasing) {
 				this.PurchaseProductIDList.ExAddValue(oID);
 
@@ -66,6 +67,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #endif			// #if MSG_PACK_ENABLE
 			}
 
+			// 모바일 플랫폼이 아닐 경우
 			if(!CAccess.IsMobilePlatform()) {
 				this.HandlePurchaseResult(oID, true, true);
 				return PurchaseProcessingResult.Pending;
@@ -75,6 +77,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
 			var oReceipts = oValidator.Validate(a_oArgs.purchasedProduct.receipt);
 			
+			// 영수증이 유효 할 경우
 			if(oReceipts.ExIsValid()) {
 				this.HandlePurchaseResult(oID, true, true);
 			} else {
@@ -105,6 +108,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		string oID = a_oProduct.definition.id;
 		CFunc.ShowLogWarning("CPurchaseManager.OnPurchaseFailed: {0}, {1}", oID, a_eReason);
 
+		// 중복 결제 상품 일 경우
 		if(a_eReason == PurchaseFailureReason.DuplicateTransaction) {
 			this.HandlePurchaseResult(oID, true, true);
 		} else {
@@ -127,6 +131,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	public virtual void Init(List<STProductInfo> a_oProductInfoList, System.Action<CPurchaseManager, bool> a_oCallback) {
 		CFunc.ShowLog("CPurchaseManager.Init: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oProductInfoList);
 
+		// 초기화가 필요 없을 경우
 		if(this.IsInit || (!CAccess.IsEditorPlatform() && !CAccess.IsMobilePlatform())) {
 			a_oCallback?.Invoke(this, this.IsInit);
 		} else {
@@ -155,6 +160,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			CFunc.ShowLog("CPurchaseManager.OnRestoreProducts: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_bIsSuccess);
 			m_bIsPurchasing = false;
 
+			// 실패했을 경우
 			if(!a_bIsSuccess) {
 				m_oRestoreCallback?.Invoke(this, null, false);
 			} else {
@@ -162,6 +168,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 				var oProductList = new List<Product>();
 
 				for(int i = 0; i < oProducts.Length; ++i) {
+					// 결제 된 비 소모품 일 경우
 					if(this.IsPurchaseNonConsumableProduct(oProducts[i])) {
 						oProductList.ExAddValue(oProducts[i]);
 					}
@@ -203,12 +210,14 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		var oProduct = this.GetProduct(a_oID);
 		bool bIsEnablePurchase = oProduct != null && oProduct.availableToPurchase;
 
+		// 결제가 불가능 할 경우
 		if(!this.IsInit || !bIsEnablePurchase || m_oPurchaseCallbackList.ContainsKey(a_oID)) {
 			a_oCallback?.Invoke(this, a_oID, false);
 		} else {
 			m_bIsPurchasing = true;
 			m_oPurchaseCallbackList.Add(a_oID, a_oCallback);
 
+			// 결제 된 상품 일 경우
 			if(this.PurchaseProductIDList.Contains(a_oID) || this.IsPurchaseNonConsumableProduct(oProduct)) {
 				this.HandlePurchaseResult(a_oID, true, true);
 			} else {
@@ -221,6 +230,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	public void RestoreProducts(System.Action<CPurchaseManager, List<Product>, bool> a_oCallback) {
 		CFunc.ShowLog("CPurchaseManager.RestoreProduct", KCDefine.B_LOG_COLOR_PLUGIN);
 
+		// 초기화가 필요 할 경우
 		if(!this.IsInit) {
 			a_oCallback?.Invoke(this, null, false);
 		} else {
@@ -233,6 +243,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			m_bIsPurchasing = CAccess.IsMobilePlatform();
 			m_oRestoreCallback = a_oCallback;
 
+			// 모바일 플랫폼이 아닐 경우
 			if(!CAccess.IsMobilePlatform()) {
 				this.OnRestoreProducts(true);
 			} else {
@@ -249,6 +260,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			var oProduct = this.GetProduct(a_oID);
 			bool bIsEnablePurchase = oProduct != null && oProduct.availableToPurchase;
 
+			// 결제 확정이 불가능 할 경우
 			if(!this.IsInit || !bIsEnablePurchase || !m_oPurchaseCallbackList.ContainsKey(a_oID)) {
 				a_oCallback?.Invoke(this, a_oID, false);
 			} else {
@@ -273,13 +285,16 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			CFunc.ShowLog("CPurchaseManager.HandlePurchaseResult: {0}, {1}, {2}, {3}",
 				KCDefine.B_LOG_COLOR_PLUGIN, a_oID, a_bIsSuccess, a_bIsInvokeCallback, a_bIsRemoveCallback);
 
+			// 결제 콜백이 존재 할 경우
 			if(m_oPurchaseCallbackList.ContainsKey(a_oID)) {
 				var oCallback = m_oPurchaseCallbackList[a_oID];
 
+				// 제거 모드 일 경우
 				if(a_bIsRemoveCallback) {
 					m_oPurchaseCallbackList.Remove(a_oID);
 				}
 
+				// 호출 모드 일 경우
 				if(a_bIsInvokeCallback) {
 					oCallback?.Invoke(this, a_oID, a_bIsSuccess);
 				}
@@ -308,6 +323,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	private void LoadPurchaseProductIDs() {
 		CFunc.ShowLog("CPurchaseManager.LoadPurchaseProductIDs", KCDefine.B_LOG_COLOR_PLUGIN);
 
+		// 파일이 존재 할 경우
 		if(File.Exists(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST)) {
 #if SECURITY_ENABLE
 			var oBytes = CFunc.ReadSecurityBytes(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST);
