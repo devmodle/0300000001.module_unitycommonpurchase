@@ -135,15 +135,11 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		if(this.IsInit || (!CAccess.IsEditorPlatform() && !CAccess.IsMobilePlatform())) {
 			a_oCallback?.Invoke(this, this.IsInit);
 		} else {
-			CAccess.Assert(a_oProductInfoList.ExIsValid());
-
 			m_oInitCallback = a_oCallback;
 			var oProductDefinitionList = new List<ProductDefinition>();
 
 			for(int i = 0; i < a_oProductInfoList.Count; ++i) {
 				var stProductInfo = a_oProductInfoList[i];
-				CAccess.Assert(stProductInfo.m_eProductType != ProductType.Subscription, KCDefine.U_MSG_INVALID_PRODUCT_TYPE);
-
 				oProductDefinitionList.Add(new ProductDefinition(stProductInfo.m_oID, stProductInfo.m_eProductType));
 			}
 			
@@ -193,13 +189,11 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 	//! 비소모 상품 결제 여부를 검사한다
 	public bool IsPurchaseNonConsumableProduct(Product a_oProduct) {
-		CAccess.Assert(this.IsInit && a_oProduct != null);
 		return a_oProduct.hasReceipt && a_oProduct.definition.type == ProductType.NonConsumable;
 	}
 
 	//! 상품을 반환한다
 	public Product GetProduct(string a_oID) {
-		CAccess.Assert(a_oID.ExIsValid());
 		return this.IsInit ? m_oStoreController.products.WithID(a_oID) : null;
 	}
 
