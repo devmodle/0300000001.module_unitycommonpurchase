@@ -6,9 +6,9 @@
         "UnityModule.Common.Extension",
         "UnityModule.Common.Func",
         "UnityModule.Common.Utility",
-        "UnityModule.UnityPurchasing",
         "MessagePack",
-        "UnityEngine.Purchasing"
+        "UnityEngine.Purchasing",
+        "UnityModule.UnityPurchasing"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
