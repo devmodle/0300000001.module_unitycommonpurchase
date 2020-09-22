@@ -100,7 +100,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 				this.HandlePurchaseResult(oID, false, true, true);
 			}
 
-			return oReceipts.ExIsValid() ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
+			return oReceipts.ExIsValid() ? 
+				PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
 #else
 			this.HandlePurchaseResult(oID, true, true);
 			return PurchaseProcessingResult.Pending;
@@ -351,7 +352,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	}
 
 #if MSG_PACK_ENABLE
-	//! 결제 상품 아이디를 저장한다
+	//! 결제 상품 식별자를 저장한다
 	private void SavePurchaseProductIDs() {
 		CFunc.ShowLog("CPurchaseManager.SavePurchaseProductIDs: {0}, {1}", 
 			KCDefine.B_LOG_COLOR_PLUGIN, this.PurchaseProductIDList, this.PurchaseProductIDList.Count);
@@ -359,7 +360,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST, this.PurchaseProductIDList);
 	}
 
-	//! 결제 상품 아이디를 로드한다
+	//! 결제 상품 식별자를 로드한다
 	private void LoadPurchaseProductIDs() {
 		CFunc.ShowLog("CPurchaseManager.LoadPurchaseProductIDs", KCDefine.B_LOG_COLOR_PLUGIN);
 
