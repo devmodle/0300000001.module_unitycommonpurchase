@@ -20,11 +20,10 @@ using MessagePack;
 public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	#region 변수
 	private bool m_bIsPurchasing = false;
+	private Dictionary<string, System.Action<CPurchaseManager, string, bool>> m_oPurchaseCallbackList = new Dictionary<string, System.Action<CPurchaseManager, string, bool>>();
 
 	private System.Action<CPurchaseManager, bool> m_oInitCallback = null;
 	private System.Action<CPurchaseManager, List<Product>, bool> m_oRestoreCallback = null;
-
-	private Dictionary<string, System.Action<CPurchaseManager, string, bool>> m_oPurchaseCallbackList = new Dictionary<string, System.Action<CPurchaseManager, string, bool>>();
 
 #if UNITY_IOS || UNITY_ANDROID
 	private IStoreController m_oStoreController = null;
