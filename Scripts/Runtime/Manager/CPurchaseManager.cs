@@ -82,8 +82,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #endif			// #if MSG_PACK_ENABLE
 			}
 
-			// 모바일 플랫폼이 아닐 경우
-			if(!CAccess.IsMobilePlatform()) {
+			// 모바일이 아닐 경우
+			if(!CAccess.IsMobile()) {
 				this.HandlePurchaseResult(oID, true, true);
 				return PurchaseProcessingResult.Pending;
 			}
@@ -151,7 +151,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		CFunc.ShowLog("CPurchaseManager.Init: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oProductInfoList);
 
 		// 초기화가 필요 없을 경우
-		if(this.IsInit || (!CAccess.IsEditorPlatform() && !CAccess.IsMobilePlatform())) {
+		if(this.IsInit || (!CAccess.IsEditor() && !CAccess.IsMobile())) {
 			a_oCallback?.Invoke(this, this.IsInit);
 		} else {
 #if UNITY_IOS || UNITY_ANDROID
@@ -247,11 +247,11 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			var oStoreExtension = m_oExtensionProvider.GetExtension<IGooglePlayStoreExtensions>();
 #endif			// #if UNITY_IOS
 
-			m_bIsPurchasing = CAccess.IsMobilePlatform();
+			m_bIsPurchasing = CAccess.IsMobile();
 			m_oRestoreCallback = a_oCallback;
 
-			// 모바일 플랫폼이 아닐 경우
-			if(!CAccess.IsMobilePlatform()) {
+			// 모바일이 아닐 경우
+			if(!CAccess.IsMobile()) {
 				this.OnRestoreProducts(true);
 			} else {
 				oStoreExtension.RestoreTransactions(this.OnRestoreProducts);
