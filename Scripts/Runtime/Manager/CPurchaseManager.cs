@@ -127,7 +127,9 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 #if UNITY_IOS || UNITY_ANDROID
 		// 중복 결제 상품 일 경우
-		if(a_eReason == PurchaseFailureReason.DuplicateTransaction) {
+		if(this.IsPurchaseNonConsumableProduct(a_oProduct) || 
+			a_eReason == PurchaseFailureReason.DuplicateTransaction) 
+		{
 			this.HandlePurchaseResult(oID, true, true);
 		} else {
 			this.HandlePurchaseResult(oID, false, true, true);
@@ -188,7 +190,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		CAccess.Assert(a_oProduct != null);
 
 #if UNITY_IOS || UNITY_ANDROID
-		return a_oProduct.hasReceipt && a_oProduct.definition.type == ProductType.NonConsumable;
+		return a_oProduct.hasReceipt && 
+			a_oProduct.definition.type == ProductType.NonConsumable;
 #else
 		return false;
 #endif			// #if UNITY_IOS || UNITY_ANDROID
@@ -328,8 +331,10 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	}
 
 	//! 결제 결과를 처리한다
-	private void HandlePurchaseResult(string a_oID, bool a_bIsSuccess, bool a_bIsInvokeCallback = true, bool a_bIsRemoveCallback = false) {
-		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_RESULT_CALLBACK, () => {
+	private void HandlePurchaseResult(string a_oID, 
+		bool a_bIsSuccess, bool a_bIsInvokeCallback = true, bool a_bIsRemoveCallback = false) 
+	{
+	jhhh	CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_RESULT_CALLBACK, () => {
 			CFunc.ShowLog("CPurchaseManager.HandlePurchaseResult: {0}, {1}, {2}, {3}",
 				KCDefine.B_LOG_COLOR_PLUGIN, a_oID, a_bIsSuccess, a_bIsInvokeCallback, a_bIsRemoveCallback);
 
