@@ -53,7 +53,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		m_oStoreController = a_oController;
 		m_oExtensionProvider = a_oProvider;
 
-		m_oInitCallback?.Invoke(this, true);
+		m_oInitCallback?.Invoke(this, this.IsInit);
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 	}
 
@@ -152,27 +152,31 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	public virtual void Init(List<STProductInfo> a_oProductInfoList, System.Action<CPurchaseManager, bool> a_oCallback) {
 		CFunc.ShowLog("CPurchaseManager.Init: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oProductInfoList);
 
-		// 초기화가 필요 없을 경우
-		if(this.IsInit || (!CAccess.IsEditor() && !CAccess.IsMobile())) {
-			a_oCallback?.Invoke(this, this.IsInit);
-		} else {
 #if UNITY_IOS || UNITY_ANDROID
+		// 초기화 되었을 경우
+		if(this.IsInit) {
+			a_oCallback?.Invoke(this, true);
+		} else {
 			m_oInitCallback = a_oCallback;
 			var oProductDefinitionList = new List<ProductDefinition>();
 
 			for(int i = 0; i < a_oProductInfoList.Count; ++i) {
 				var stProductInfo = a_oProductInfoList[i];
-				oProductDefinitionList.Add(new ProductDefinition(stProductInfo.m_oID, stProductInfo.m_eProductType));
+				
+				var stProductDefinition = new ProductDefinition(stProductInfo.m_oID, 
+					stProductInfo.m_eProductType);
+
+				oProductDefinitionList.Add(stProductDefinition);
 			}
 			
 			var oBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 			oBuilder.AddProducts(oProductDefinitionList);
 
 			UnityPurchasing.Initialize(this, oBuilder);
-#else
-			a_oCallback?.Invoke(this, this.IsInit);
-#endif			// #if UNITY_IOS || UNITY_ANDROID
 		}
+#else
+		a_oCallback?.Invoke(this, false);
+#endif			// #if UNITY_IOS || UNITY_ANDROID
 	}
 
 	//! 비소모 상품 결제 여부를 검사한다
