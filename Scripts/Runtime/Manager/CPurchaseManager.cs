@@ -89,7 +89,9 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			}
 
 #if RECEIPT_CHECK_ENABLE
-			var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
+			var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), 
+				AppleTangle.Data(), Application.identifier);
+
 			var oReceipts = oValidator.Validate(a_oArgs.purchasedProduct.receipt);
 			
 			// 영수증이 유효 할 경우
@@ -149,7 +151,9 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	}
 
 	//! 초기화
-	public virtual void Init(List<STProductInfo> a_oProductInfoList, System.Action<CPurchaseManager, bool> a_oCallback) {
+	public virtual void Init(List<STProductInfo> a_oProductInfoList, 
+		System.Action<CPurchaseManager, bool> a_oCallback) 
+	{
 		CFunc.ShowLog("CPurchaseManager.Init: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oProductInfoList);
 
 #if UNITY_IOS || UNITY_ANDROID
@@ -161,12 +165,10 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			var oProductDefinitionList = new List<ProductDefinition>();
 
 			for(int i = 0; i < a_oProductInfoList.Count; ++i) {
-				var stProductInfo = a_oProductInfoList[i];
-				
-				var stProductDefinition = new ProductDefinition(stProductInfo.m_oID, 
-					stProductInfo.m_eProductType);
+				var oProductDefinition = new ProductDefinition(a_oProductInfoList[i].m_oID, 
+					a_oProductInfoList[i].m_eProductType);
 
-				oProductDefinitionList.Add(stProductDefinition);
+				oProductDefinitionList.Add(oProductDefinition);
 			}
 			
 			var oBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
