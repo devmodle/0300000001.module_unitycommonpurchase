@@ -4,11 +4,13 @@ using System.IO;
 using UnityEngine;
 
 #if PURCHASE_MODULE_ENABLE
+#if UNITY_IOS || UNITY_ANDROID
 using UnityEngine.Purchasing;
 
 #if RECEIPT_CHECK_ENABLE
 using UnityEngine.Purchasing.Security;
 #endif			// #if RECEIPT_CHECK_ENABLE
+#endif			// #if UNITY_IOS || UNITY_ANDROID
 
 #if MSG_PACK_ENABLE
 using MessagePack;
@@ -33,6 +35,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 	#region 프로퍼티
 	public List<string> PurchaseProductIDList { get; private set; } = new List<string>();
+	
 	public bool IsInit {
 		get {
 #if UNITY_IOS || UNITY_ANDROID
