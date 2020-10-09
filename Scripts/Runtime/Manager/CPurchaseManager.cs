@@ -2,21 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using MessagePack;
 
 #if PURCHASE_MODULE_ENABLE
-#if UNITY_IOS || UNITY_ANDROID
 using UnityEngine.Purchasing;
 
-#if RECEIPT_CHECK_ENABLE
+#if RECEIPT_CHECK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
 using UnityEngine.Purchasing.Security;
-#endif			// #if RECEIPT_CHECK_ENABLE
-#endif			// #if UNITY_IOS || UNITY_ANDROID
-
-#if MSG_PACK_ENABLE
-using MessagePack;
-#else
-[System.Obsolete(KCDefine.U_MSG_NEED_MSG_PACK, true)]
-#endif			// #if MSG_PACK_ENABLE
+#endif			// #if RECEIPT_CHECK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
 
 //! 인앱 결제 관리자
 public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
@@ -79,10 +72,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			// 결제 중 일 경우
 			if(m_bIsPurchasing) {
 				this.PurchaseProductIDList.ExAddValue(oID);
-
-#if MSG_PACK_ENABLE
 				this.SavePurchaseProductIDs();
-#endif			// #if MSG_PACK_ENABLE
 			}
 
 			// 모바일이 아닐 경우
@@ -114,10 +104,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			CFunc.ShowLogWarning("CPurchaseManager.ProcessPurchase Exception: {0}", oException.Message);
 			this.PurchaseProductIDList.ExRemoveValue(oID);
 
-#if MSG_PACK_ENABLE
 			this.SavePurchaseProductIDs();
-#endif			// #if MSG_PACK_ENABLE
-
 			this.HandlePurchaseResult(oID, false, true, true);
 		}
 #endif			// #if UNITY_IOS || UNITY_ANDROID
@@ -147,10 +134,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	//! 초기화
 	public override void Awake() {
 		base.Awake();
-
-#if MSG_PACK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
 		this.LoadPurchaseProductIDs();
-#endif			// #if MSG_PACK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
 	}
 
 	//! 초기화
@@ -290,10 +274,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 				m_oStoreController.ConfirmPendingPurchase(oProduct);
 				this.PurchaseProductIDList.ExRemoveValue(a_oID);
 				
-#if MSG_PACK_ENABLE
 				this.SavePurchaseProductIDs();
-#endif			// #if MSG_PACK_ENABLE
-
 				this.HandlePurchaseResult(a_oID, true, false, true);
 
 				m_bIsPurchasing = false;
@@ -303,6 +284,27 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 			}
 		});
+	}
+
+	//! 결제 상품 식별자를 저장한다
+	private void SavePurchaseProductIDs() {
+		CFunc.ShowLog("CPurchaseManager.SavePurchaseProductIDs: {0}, {1}", 
+			KCDefine.B_LOG_COLOR_PLUGIN, this.PurchaseProductIDList, this.PurchaseProductIDList.Count);
+
+		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST, this.PurchaseProductIDList);
+	}
+
+	//! 결제 상품 식별자를 로드한다
+	private void LoadPurchaseProductIDs() {
+		CFunc.ShowLog("CPurchaseManager.LoadPurchaseProductIDs", KCDefine.B_LOG_COLOR_PLUGIN);
+
+		// 파일이 존재 할 경우
+		if(File.Exists(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST)) {
+			this.PurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST);
+
+			CFunc.ShowLog("CPurchaseManager.OnLoadPurchaseProductIDs: {0}, {1}", 
+				KCDefine.B_LOG_COLOR_PLUGIN, this.PurchaseProductIDList, this.PurchaseProductIDList.Count);
+		}
 	}
 	#endregion			// 함수
 
@@ -329,11 +331,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 					this.PurchaseProductIDList.ExRemoveValue(oProducts[i].definition.id);
 				}
-
-#if MSG_PACK_ENABLE
+				
 				this.SavePurchaseProductIDs();
-#endif			// #if MSG_PACK_ENABLE
-
 				m_oRestoreCallback?.Invoke(this, oProductList, true);
 			}
 		});
@@ -363,29 +362,6 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			}
 		});
 	}
-
-#if MSG_PACK_ENABLE
-	//! 결제 상품 식별자를 저장한다
-	private void SavePurchaseProductIDs() {
-		CFunc.ShowLog("CPurchaseManager.SavePurchaseProductIDs: {0}, {1}", 
-			KCDefine.B_LOG_COLOR_PLUGIN, this.PurchaseProductIDList, this.PurchaseProductIDList.Count);
-
-		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST, this.PurchaseProductIDList);
-	}
-
-	//! 결제 상품 식별자를 로드한다
-	private void LoadPurchaseProductIDs() {
-		CFunc.ShowLog("CPurchaseManager.LoadPurchaseProductIDs", KCDefine.B_LOG_COLOR_PLUGIN);
-
-		// 파일이 존재 할 경우
-		if(File.Exists(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST)) {
-			this.PurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST);
-
-			CFunc.ShowLog("CPurchaseManager.OnLoadPurchaseProductIDs: {0}, {1}", 
-				KCDefine.B_LOG_COLOR_PLUGIN, this.PurchaseProductIDList, this.PurchaseProductIDList.Count);
-		}
-	}
-#endif			// #if MSG_PACK_ENABLE
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 	#endregion			// 조건부 함수
 }
