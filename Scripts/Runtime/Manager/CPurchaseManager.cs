@@ -150,7 +150,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			m_oInitCallback = a_oCallback;
 			var oProductDefinitionList = new List<ProductDefinition>();
 
-			for(int i = 0; i < a_oProductInfoList.Count; ++i) {
+			for(int i = KCDefine.B_INDEX_START; i < a_oProductInfoList.Count; ++i) {
 				var oProductDefinition = new ProductDefinition(a_oProductInfoList[i].m_oID, 
 					a_oProductInfoList[i].m_eProductType);
 
@@ -300,7 +300,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 				var oProducts = m_oStoreController.products.all;
 				var oProductList = new List<Product>();
 
-				for(int i = 0; i < oProducts.Length; ++i) {
+				for(int i = KCDefine.B_INDEX_START; i < oProducts.Length; ++i) {
 					// 결제 된 비 소모품 일 경우
 					if(this.IsPurchaseNonConsumableProduct(oProducts[i])) {
 						oProductList.ExAddValue(oProducts[i]);
