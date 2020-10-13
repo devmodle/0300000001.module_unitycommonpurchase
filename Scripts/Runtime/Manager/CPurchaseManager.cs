@@ -140,6 +140,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	public virtual void Init(List<STProductInfo> a_oProductInfoList, 
 		System.Action<CPurchaseManager, bool> a_oCallback) 
 	{
+		CAccess.Assert(a_oProductInfoList != null);
 		CFunc.ShowLog("CPurchaseManager.Init: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oProductInfoList);
 
 #if UNITY_IOS || UNITY_ANDROID
