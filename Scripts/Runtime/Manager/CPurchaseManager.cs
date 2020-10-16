@@ -326,7 +326,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		CFunc.ShowLog("CPurchaseManager.SavePurchaseProductIDs: {0}, {1}", 
 			KCDefine.B_LOG_COLOR_PLUGIN, this.PurchaseProductIDList, this.PurchaseProductIDList.Count);
 
-		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST, this.PurchaseProductIDList);
+		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST, 
+			this.PurchaseProductIDList);
 	}
 
 	//! 결제 상품 식별자를 로드한다
