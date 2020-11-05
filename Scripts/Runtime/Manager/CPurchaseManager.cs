@@ -43,22 +43,25 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	#region 인터페이스
 	//! 초기화 되었을 경우
 	public void OnInitialized(IStoreController a_oController, IExtensionProvider a_oProvider) {
-		CFunc.ShowLog("CPurchaseManager.OnInitialized", KCDefine.B_LOG_COLOR_PLUGIN);
-
 #if UNITY_IOS || UNITY_ANDROID
-		m_oStoreController = a_oController;
-		m_oExtensionProvider = a_oProvider;
+		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_CALLBACK, () => {
+			CFunc.ShowLog("CPurchaseManager.OnInitialized", KCDefine.B_LOG_COLOR_PLUGIN);
 
-		m_oInitCallback?.Invoke(this, this.IsInit);
+			m_oStoreController = a_oController;
+			m_oExtensionProvider = a_oProvider;
+
+			m_oInitCallback?.Invoke(this, this.IsInit);
+		});
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 	}
 
 	//! 초기화에 실패했을 경우
 	public void OnInitializeFailed(InitializationFailureReason a_eReason) {
-		CFunc.ShowLogWarning("CPurchaseManager.OnInitializeFailed: {0}", a_eReason);
-
 #if UNITY_IOS || UNITY_ANDROID
-		m_oInitCallback?.Invoke(this, false);
+		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
+			CFunc.ShowLogWarning("CPurchaseManager.OnInitializeFailed: {0}", a_eReason);
+			m_oInitCallback?.Invoke(this, false);
+		});
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 	}
 
@@ -110,18 +113,20 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 	//! 결제에 실패했을 경우
 	public void OnPurchaseFailed(Product a_oProduct, PurchaseFailureReason a_eReason) {
-		string oID = a_oProduct.definition.id;
-		CFunc.ShowLogWarning("CPurchaseManager.OnPurchaseFailed: {0}, {1}", oID, a_eReason);
-
 #if UNITY_IOS || UNITY_ANDROID
-		// 중복 결제 상품 일 경우
-		if(this.IsPurchaseNonConsumableProduct(a_oProduct) || 
-			a_eReason == PurchaseFailureReason.DuplicateTransaction) 
-		{
-			this.HandlePurchaseResult(oID, true, true);
-		} else {
-			this.HandlePurchaseResult(oID, false, true, true);
-		}
+		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_FAIL_CALLBACK, () => {
+			string oID = a_oProduct.definition.id;
+			CFunc.ShowLogWarning("CPurchaseManager.OnPurchaseFailed: {0}, {1}", oID, a_eReason);
+
+			// 중복 결제 상품 일 경우
+			if(this.IsPurchaseNonConsumableProduct(a_oProduct) || 
+				a_eReason == PurchaseFailureReason.DuplicateTransaction) 
+			{
+				this.HandlePurchaseResult(oID, true, true);
+			} else {
+				this.HandlePurchaseResult(oID, false, true, true);
+			}
+		});
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 	}
 	#endregion			// 인터페이스
