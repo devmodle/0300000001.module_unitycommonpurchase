@@ -7,11 +7,11 @@
     "email": "are2341@nate.com"
   },
   "dependencies": {
-	"unitymodule.common.define": "https://sd.lee:NSString132!@gitlab.com/9tapmodule.repository/unitymodule_common_define_client.git#1.2.0",
-	"unitymodule.common.access": "https://sd.lee:NSString132!@gitlab.com/9tapmodule.repository/unitymodule_common_access_client.git#1.2.0",
-	"unitymodule.common.extension": "https://sd.lee:NSString132!@gitlab.com/9tapmodule.repository/unitymodule_common_extension_client.git#1.2.0",
-	"unitymodule.common.func": "https://sd.lee:NSString132!@gitlab.com/9tapmodule.repository/unitymodule_common_func_client.git#1.2.0",
-	"unitymodule.common.utility": "https://sd.lee:NSString132!@gitlab.com/9tapmodule.repository/unitymodule_common_utility_client.git#1.2.0",
-	"unitymodule.common.externals": "https://sd.lee:NSString132!@gitlab.com/9tapmodule.repository/unitymodule_common_externals_client.git#1.2.0"
+	"unitymodule.common.define": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/unitymodule_common_define_client.git#1.2.0",
+	"unitymodule.common.access": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/unitymodule_common_access_client.git#1.2.0",
+	"unitymodule.common.extension": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/unitymodule_common_extension_client.git#1.2.0",
+	"unitymodule.common.func": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/unitymodule_common_func_client.git#1.2.0",
+	"unitymodule.common.utility": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/unitymodule_common_utility_client.git#1.2.0",
+	"unitymodule.common.externals": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/unitymodule_common_externals_client.git#1.2.0"
   }
 }
