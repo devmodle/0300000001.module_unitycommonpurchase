@@ -179,8 +179,13 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #if UNITY_IOS || UNITY_ANDROID
 		CAccess.Assert(a_oID.ExIsValid());
 
-		var oProduct = this.GetProduct(a_oID);
-		return this.IsPurchaseNonConsumableProduct(oProduct);
+		// 초기화 되었을 경우
+		if(this.IsInit) {
+			var oProduct = this.GetProduct(a_oID);
+			return this.IsPurchaseNonConsumableProduct(oProduct);
+		}
+
+		return false;
 #else
 		return false;
 #endif			// #if UNITY_IOS || UNITY_ANDROID
@@ -191,8 +196,13 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #if UNITY_IOS || UNITY_ANDROID
 		CAccess.Assert(a_oProduct != null);
 
-		return a_oProduct.hasReceipt && 
-			a_oProduct.definition.type == ProductType.NonConsumable;
+		// 초기화 되었을 경우
+		if(this.IsInit) {
+			return a_oProduct.hasReceipt && 
+				a_oProduct.definition.type == ProductType.NonConsumable;
+		}
+		
+		return false;
 #else
 		return false;
 #endif			// #if UNITY_IOS || UNITY_ANDROID
