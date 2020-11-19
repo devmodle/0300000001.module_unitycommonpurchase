@@ -50,7 +50,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			m_oStoreController = a_oController;
 			m_oExtensionProvider = a_oProvider;
 
-			m_oInitCallback?.Invoke(this, this.IsInit);
+			CFunc.Invoke(ref m_oInitCallback, this, this.IsInit);
 		});
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 	}
@@ -60,7 +60,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #if UNITY_IOS || UNITY_ANDROID
 		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
 			CFunc.ShowLogWarning("CPurchaseManager.OnInitializeFailed: {0}", a_eReason);
-			m_oInitCallback?.Invoke(this, false);
+			CFunc.Invoke(ref m_oInitCallback, this, false);
 		});
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 	}
@@ -334,6 +334,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 				this.SavePurchaseProductIDs();
 				m_oRestoreCallback?.Invoke(this, oProductList, true);
 			}
+
+			m_oRestoreCallback = null;
 		});
 	}
 
