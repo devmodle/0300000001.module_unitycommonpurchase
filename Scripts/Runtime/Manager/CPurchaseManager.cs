@@ -44,7 +44,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	//! 초기화 되었을 경우
 	public void OnInitialized(IStoreController a_oController, IExtensionProvider a_oProvider) {
 #if UNITY_IOS || UNITY_ANDROID
-		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_CALLBACK, () => {
 			CFunc.ShowLog("CPurchaseManager.OnInitialized", KCDefine.B_LOG_COLOR_PLUGIN);
 
 			m_oStoreController = a_oController;
@@ -58,7 +58,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	//! 초기화에 실패했을 경우
 	public void OnInitializeFailed(InitializationFailureReason a_eReason) {
 #if UNITY_IOS || UNITY_ANDROID
-		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
 			CFunc.ShowLogWarning("CPurchaseManager.OnInitializeFailed: {0}", a_eReason);
 			CFunc.Invoke(ref m_oInitCallback, this, false);
 		});
@@ -114,7 +114,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	//! 결제에 실패했을 경우
 	public void OnPurchaseFailed(Product a_oProduct, PurchaseFailureReason a_eReason) {
 #if UNITY_IOS || UNITY_ANDROID
-		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_FAIL_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_FAIL_CALLBACK, () => {
 			string oID = a_oProduct.definition.id;
 			CFunc.ShowLogWarning("CPurchaseManager.OnPurchaseFailed: {0}, {1}", oID, a_eReason);
 
@@ -278,7 +278,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 	//! 결제를 확정한다
 	public void ConfirmPurchase(string a_oID, System.Action<CPurchaseManager, string, bool> a_oCallback) {
-		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_CONFIRM_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_CONFIRM_CALLBACK, () => {
 			CFunc.ShowLog("CPurchaseManager.ConfirmPurchase: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oID);
 
 #if UNITY_IOS || UNITY_ANDROID
@@ -311,7 +311,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #if UNITY_IOS || UNITY_ANDROID
 	//! 상품이 복원 되었을 경우
 	public void OnRestoreProducts(bool a_bIsSuccess) {
-		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_RESTORE_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_RESTORE_CALLBACK, () => {
 			CFunc.ShowLog("CPurchaseManager.OnRestoreProducts: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_bIsSuccess);
 			m_bIsPurchasing = false;
 
@@ -365,7 +365,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	private void HandlePurchaseResult(string a_oID, 
 		bool a_bIsSuccess, bool a_bIsInvokeCallback = true, bool a_bIsRemoveCallback = false) 
 	{
-		CScheduleManager.Instance.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_RESULT_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_RESULT_CALLBACK, () => {
 			CAccess.Assert(a_oID.ExIsValid());
 			
 			CFunc.ShowLog("CPurchaseManager.HandlePurchaseResult: {0}, {1}, {2}, {3}",
