@@ -2,10 +2,12 @@
     "name": "UnityModule.Common.Purchase",
     "references": [
         "UnityModule.Common.Define",
-        "UnityModule.Common.Access",
-        "UnityModule.Common.Extension",
-        "UnityModule.Common.Func",
-        "UnityModule.Common.Utility",
+		"UnityModule.Common.Access",
+		"UnityModule.Common.Factory",
+		"UnityModule.Common.Extension",
+		"UnityModule.Common.Func",
+		"UnityModule.Common.Utility",
+		"UnityModule.Common.Externals",
         "MessagePack",
         "UnityEngine.Purchasing",
         "UnityModule.UnityPurchasing"
