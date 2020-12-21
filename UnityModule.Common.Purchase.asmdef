@@ -1,16 +1,17 @@
 {
     "name": "UnityModule.Common.Purchase",
+    "rootNamespace": "",
     "references": [
+        "UnityModule.UnityPurchasing",
         "UnityModule.Common.Define",
-		"UnityModule.Common.Access",
-		"UnityModule.Common.Factory",
-		"UnityModule.Common.Extension",
-		"UnityModule.Common.Func",
-		"UnityModule.Common.Utility",
-		"UnityModule.Common.Externals",
+        "UnityModule.Common.Access",
+        "UnityModule.Common.Factory",
+        "UnityModule.Common.Extension",
+        "UnityModule.Common.Func",
+        "UnityModule.Common.Utility",
+        "UnityModule.Common.Externals",
         "MessagePack",
-        "UnityEngine.Purchasing",
-        "UnityModule.UnityPurchasing"
+        "UnityEngine.Purchasing"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
