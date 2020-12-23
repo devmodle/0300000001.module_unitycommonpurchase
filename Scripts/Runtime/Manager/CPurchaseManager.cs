@@ -356,7 +356,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		CFunc.ShowLog("CPurchaseManager.SavePurchaseProductIDs: {0}, {1}", 
 			KCDefine.B_LOG_COLOR_PLUGIN, this.PurchaseProductIDList, this.PurchaseProductIDList.Count);
 
-		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST, 
+		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_LIST, 
 			this.PurchaseProductIDList);
 	}
 
@@ -366,8 +366,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			KCDefine.B_LOG_COLOR_PLUGIN);
 
 		// 파일이 존재 할 경우
-		if(File.Exists(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST)) {
-			this.PurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_PATH_PURCHASE_M_PRODUCT_ID_LIST);
+		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_LIST)) {
+			this.PurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_LIST);
 
 			CFunc.ShowLog("CPurchaseManager.OnLoadPurchaseProductIDs: {0}, {1}", 
 				KCDefine.B_LOG_COLOR_PLUGIN, this.PurchaseProductIDList, this.PurchaseProductIDList.Count);
