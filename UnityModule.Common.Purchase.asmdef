@@ -11,6 +11,7 @@
         "UnityModule.Common.Utility",
         "UnityModule.Common.Externals",
         "MessagePack",
+        "MessagePack.Annotations",
         "UnityEngine.Purchasing"
     ],
     "includePlatforms": [],
