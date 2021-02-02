@@ -187,12 +187,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		CAccess.Assert(a_oProduct != null);
 
 #if UNITY_IOS || UNITY_ANDROID
-		// 초기화 되었을 경우
-		if(this.IsInit) {
-			return a_oProduct.hasReceipt && a_oProduct.definition.type == ProductType.NonConsumable;
-		}
-		
-		return false;
+		return this.IsInit && (a_oProduct.hasReceipt && a_oProduct.definition.type == ProductType.NonConsumable);
 #else
 		return false;
 #endif			// #if UNITY_IOS || UNITY_ANDROID
@@ -216,10 +211,10 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 #if UNITY_IOS || UNITY_ANDROID
 		var oProduct = this.GetProduct(a_oID);
-		bool bIsEnablePurchase = oProduct != null && oProduct.availableToPurchase;
+		bool bIsEnablePurchase = this.IsInit && (oProduct != null && oProduct.availableToPurchase);
 
 		// 결제 가능 할 경우
-		if(this.IsInit && bIsEnablePurchase && !m_oPurchaseCallbackList.ContainsKey(a_oID)) {
+		if(bIsEnablePurchase && !m_oPurchaseCallbackList.ContainsKey(a_oID)) {
 			m_bIsPurchasing = true;
 			m_oPurchaseCallbackList.Add(a_oID, a_oCallback);
 
@@ -263,31 +258,31 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	}
 
 	//! 결제를 확정한다
-	public void ConfirmPurchase(string a_oID, System.Action<CPurchaseManager, string, bool> a_oCallback) {
-		CAccess.Assert(a_oID.ExIsValid());
+	public void ConfirmPurchase(string a_oProductID, System.Action<CPurchaseManager, string, bool> a_oCallback) {
+		CAccess.Assert(a_oProductID.ExIsValid());
 
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_CONFIRM_CALLBACK, () => {
-			CFunc.ShowLog("CPurchaseManager.ConfirmPurchase: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oID);
+			CFunc.ShowLog("CPurchaseManager.ConfirmPurchase: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oProductID);
 
 #if UNITY_IOS || UNITY_ANDROID
-			var oProduct = this.GetProduct(a_oID);
-			bool bIsEnablePurchase = oProduct != null && oProduct.availableToPurchase;
+			var oProduct = this.GetProduct(a_oProductID);
+			bool bIsEnablePurchase = this.IsInit && (oProduct != null && oProduct.availableToPurchase);
 
 			// 확정 가능 할 경우
-			if(this.IsInit && bIsEnablePurchase && m_oPurchaseCallbackList.ContainsKey(a_oID)) {
+			if(bIsEnablePurchase && m_oPurchaseCallbackList.ContainsKey(a_oProductID)) {
 				m_oStoreController.ConfirmPendingPurchase(oProduct);
-				this.PurchaseProductIDList.ExRemoveValue(a_oID);
+				this.PurchaseProductIDList.ExRemoveValue(a_oProductID);
 				
 				this.SavePurchaseProductIDs();
-				this.HandlePurchaseResult(a_oID, true, false, true);
+				this.HandlePurchaseResult(a_oProductID, true, false, true);
 
 				m_bIsPurchasing = false;
-				a_oCallback?.Invoke(this, a_oID, true);
+				a_oCallback?.Invoke(this, a_oProductID, true);
 			} else {
-				a_oCallback?.Invoke(this, a_oID, false);
+				a_oCallback?.Invoke(this, a_oProductID, false);
 			}
 #else
-			a_oCallback?.Invoke(this, a_oID, false);
+			a_oCallback?.Invoke(this, a_oProductID, false);
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 		});
 	}
@@ -343,24 +338,24 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	}
 
 	//! 결제 결과를 처리한다
-	private void HandlePurchaseResult(string a_oID, bool a_bIsSuccess, bool a_bIsInvokeCallback = true, bool a_bIsRemoveCallback = false) {
-		CAccess.Assert(a_oID.ExIsValid());
+	private void HandlePurchaseResult(string a_oProductID, bool a_bIsSuccess, bool a_bIsInvokeCallback = true, bool a_bIsRemoveCallback = false) {
+		CAccess.Assert(a_oProductID.ExIsValid());
 		
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_RESULT_CALLBACK, () => {
-			CFunc.ShowLog("CPurchaseManager.HandlePurchaseResult: {0}, {1}, {2}, {3}", KCDefine.B_LOG_COLOR_PLUGIN, a_oID, a_bIsSuccess, a_bIsInvokeCallback, a_bIsRemoveCallback);
+			CFunc.ShowLog("CPurchaseManager.HandlePurchaseResult: {0}, {1}, {2}, {3}", KCDefine.B_LOG_COLOR_PLUGIN, a_oProductID, a_bIsSuccess, a_bIsInvokeCallback, a_bIsRemoveCallback);
 
 			// 결제 콜백이 존재 할 경우
-			if(m_oPurchaseCallbackList.ContainsKey(a_oID)) {
-				var oCallback = m_oPurchaseCallbackList[a_oID];
+			if(m_oPurchaseCallbackList.ContainsKey(a_oProductID)) {
+				var oCallback = m_oPurchaseCallbackList[a_oProductID];
 
 				// 제거 모드 일 경우
 				if(a_bIsRemoveCallback) {
-					m_oPurchaseCallbackList.Remove(a_oID);
+					m_oPurchaseCallbackList.Remove(a_oProductID);
 				}
 
 				// 호출 모드 일 경우
 				if(a_bIsInvokeCallback) {
-					oCallback?.Invoke(this, a_oID, a_bIsSuccess);
+					oCallback?.Invoke(this, a_oProductID, a_bIsSuccess);
 				}
 			}
 		});
