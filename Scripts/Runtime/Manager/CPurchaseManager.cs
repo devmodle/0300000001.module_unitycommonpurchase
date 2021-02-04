@@ -152,7 +152,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 			for(int i = 0; i < a_oProductInfoList.Count; ++i) {
 				var oProductDefinition = new ProductDefinition(a_oProductInfoList[i].m_oID, a_oProductInfoList[i].m_eProductType);
-				oProductDefinitionList.Add(oProductDefinition);
+				oProductDefinitionList.ExAddValue(oProductDefinition);
 			}
 			
 			var oBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -345,12 +345,10 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			CFunc.ShowLog("CPurchaseManager.HandlePurchaseResult: {0}, {1}, {2}, {3}", KCDefine.B_LOG_COLOR_PLUGIN, a_oProductID, a_bIsSuccess, a_bIsInvokeCallback, a_bIsRemoveCallback);
 
 			// 결제 콜백이 존재 할 경우
-			if(m_oPurchaseCallbackList.ContainsKey(a_oProductID)) {
-				var oCallback = m_oPurchaseCallbackList[a_oProductID];
-
+			if(m_oPurchaseCallbackList.TryGetValue(a_oProductID, out System.Action<CPurchaseManager, string, bool> oCallback)) {
 				// 제거 모드 일 경우
 				if(a_bIsRemoveCallback) {
-					m_oPurchaseCallbackList.Remove(a_oProductID);
+					m_oPurchaseCallbackList.ExRemoveValue(a_oProductID);
 				}
 
 				// 호출 모드 일 경우
