@@ -13,7 +13,14 @@ using UnityEngine.Purchasing.Security;
 
 //! 인앱 결제 관리자
 public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
+	//! 매개 변수
+	public struct STParams {
+		public List<STProductInfo> m_oProductInfoList;
+	}
+
 	#region 변수
+	private STParams m_stParams;
+	
 	private bool m_bIsPurchasing = false;
 	private Dictionary<string, System.Action<CPurchaseManager, string, bool>> m_oPurchaseCallbackList = new Dictionary<string, System.Action<CPurchaseManager, string, bool>>();
 
@@ -42,9 +49,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 	#region 인터페이스
 	//! 초기화 되었을 경우
-	public void OnInitialized(IStoreController a_oController, 
-		IExtensionProvider a_oProvider) 
-	{
+	public void OnInitialized(IStoreController a_oController, IExtensionProvider a_oProvider) {
 #if UNITY_IOS || UNITY_ANDROID
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_CALLBACK, () => {
 			CFunc.ShowLog("CPurchaseManager.OnInitialized", KCDefine.B_LOG_COLOR_PLUGIN);
@@ -138,20 +143,22 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	}
 
 	//! 초기화
-	public virtual void Init(List<STProductInfo> a_oProductInfoList, System.Action<CPurchaseManager, bool> a_oCallback) {
-		CAccess.Assert(a_oProductInfoList != null);
-		CFunc.ShowLog("CPurchaseManager.Init: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_oProductInfoList);
+	public virtual void Init(STParams a_stParams, System.Action<CPurchaseManager, bool> a_oCallback) {
+		CAccess.Assert(a_stParams.m_oProductInfoList != null);
+		CFunc.ShowLog("CPurchaseManager.Init: {0}", KCDefine.B_LOG_COLOR_PLUGIN, a_stParams.m_oProductInfoList);
 
 #if UNITY_IOS || UNITY_ANDROID
 		// 초기화 되었을 경우
 		if(this.IsInit) {
 			a_oCallback?.Invoke(this, true);
 		} else {
+			m_stParams = a_stParams;
 			m_oInitCallback = a_oCallback;
+
 			var oProductDefinitionList = new List<ProductDefinition>();
 
-			for(int i = 0; i < a_oProductInfoList.Count; ++i) {
-				var oProductDefinition = new ProductDefinition(a_oProductInfoList[i].m_oID, a_oProductInfoList[i].m_eProductType);
+			for(int i = 0; i < a_stParams.m_oProductInfoList.Count; ++i) {
+				var oProductDefinition = new ProductDefinition(a_stParams.m_oProductInfoList[i].m_oID, a_stParams.m_oProductInfoList[i].m_eProductType);
 				oProductDefinitionList.ExAddValue(oProductDefinition);
 			}
 			
