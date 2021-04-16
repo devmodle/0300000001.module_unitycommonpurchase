@@ -239,7 +239,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #endif			// #if UNITY_IOS || UNITY_ANDROID
 	}
 	
-	//! 상품을 복구한다
+	//! 상품을 복원한다
 	public void RestoreProducts(System.Action<CPurchaseManager, List<Product>, bool> a_oCallback) {
 		CFunc.ShowLog("CPurchaseManager.RestoreProduct", KCDefine.B_LOG_COLOR_PLUGIN);
 
