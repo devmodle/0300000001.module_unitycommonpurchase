@@ -313,7 +313,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 				var oProductList = new List<Product>();
 
 				for(int i = 0; i < oProducts.Length; ++i) {
-					// 결제 된 비 소모품 일 경우
+					// 결제 된 비소모 상품 일 경우
 					if(this.IsPurchaseNonConsumableProduct(oProducts[i])) {
 						oProductList.ExAddValue(oProducts[i]);
 					}
