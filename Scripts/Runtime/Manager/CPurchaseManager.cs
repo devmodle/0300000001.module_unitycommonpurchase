@@ -82,7 +82,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		try {
 			// 결제 중 일 경우
 			if(m_bIsPurchasing) {
-				this.PurchaseProductIDList.ExAddValue(oID);
+				this.PurchaseProductIDList.ExAddVal(oID);
 				this.SavePurchaseProductIDs();
 			}
 
@@ -104,7 +104,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #endif			// #if RECEIPT_CHECK_ENABLE
 		} catch(System.Exception oException) {
 			CFunc.ShowLogWarning("CPurchaseManager.ProcessPurchase Exception: {0}", oException.Message);
-			this.PurchaseProductIDList.ExRemoveValue(oID);
+			this.PurchaseProductIDList.ExRemoveVal(oID);
 
 			this.SavePurchaseProductIDs();
 			this.HandlePurchaseResult(oID, false, true, true);
@@ -161,7 +161,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 				CAccess.Assert(a_stParams.m_oProductInfoList[i].m_oID.ExIsValid() && a_stParams.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
 
 				var oProductDefinition = new ProductDefinition(a_stParams.m_oProductInfoList[i].m_oID, a_stParams.m_oProductInfoList[i].m_eProductType);
-				oProductDefinitionList.ExAddValue(oProductDefinition);
+				oProductDefinitionList.ExAddVal(oProductDefinition);
 			}
 			
 			var oBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
@@ -280,7 +280,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			// 확정 가능 할 경우
 			if(bIsEnablePurchase && m_oPurchaseCallbackList.ContainsKey(a_oProductID)) {
 				m_oStoreController.ConfirmPendingPurchase(oProduct);
-				this.PurchaseProductIDList.ExRemoveValue(a_oProductID);
+				this.PurchaseProductIDList.ExRemoveVal(a_oProductID);
 				
 				this.SavePurchaseProductIDs();
 				this.HandlePurchaseResult(a_oProductID, true, false, true);
@@ -315,10 +315,10 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 				for(int i = 0; i < oProducts.Length; ++i) {
 					// 결제 된 비소모 상품 일 경우
 					if(this.IsPurchaseNonConsumableProduct(oProducts[i])) {
-						oProductList.ExAddValue(oProducts[i]);
+						oProductList.ExAddVal(oProducts[i]);
 					}
 
-					this.PurchaseProductIDList.ExRemoveValue(oProducts[i].definition.id);
+					this.PurchaseProductIDList.ExRemoveVal(oProducts[i].definition.id);
 				}
 				
 				this.SavePurchaseProductIDs();
@@ -357,7 +357,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			if(m_oPurchaseCallbackList.TryGetValue(a_oProductID, out System.Action<CPurchaseManager, string, bool> oCallback)) {
 				// 제거 모드 일 경우
 				if(a_bIsRemoveCallback) {
-					m_oPurchaseCallbackList.ExRemoveValue(a_oProductID);
+					m_oPurchaseCallbackList.ExRemoveVal(a_oProductID);
 				}
 
 				// 호출 모드 일 경우
