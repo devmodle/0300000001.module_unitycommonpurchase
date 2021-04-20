@@ -12,7 +12,8 @@
         "UnityModule.Common.Externals",
         "MessagePack",
         "MessagePack.Annotations",
-        "UnityEngine.Purchasing"
+        "UnityEngine.Purchasing",
+        "UnityEngine.Purchasing.Stores"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
