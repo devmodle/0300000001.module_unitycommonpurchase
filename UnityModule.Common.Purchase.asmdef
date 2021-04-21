@@ -13,7 +13,10 @@
         "MessagePack",
         "MessagePack.Annotations",
         "UnityEngine.Purchasing",
-        "UnityEngine.Purchasing.Stores"
+        "UnityEngine.Purchasing.Stores",
+        "UnityEngine.Purchasing.Security",
+        "UnityEngine.Purchasing.SecurityCore",
+        "UnityEngine.Purchasing.SecurityStub"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
