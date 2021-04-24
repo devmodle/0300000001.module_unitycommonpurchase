@@ -7,12 +7,12 @@
     "email": "are2341@nate.com"
   },
   "dependencies": {
-	"unitymodule.common.define": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/00001.unitymodule_common_define_client.git#1.3.1",
-    "unitymodule.common.access": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/00001.unitymodule_common_access_client.git#1.3.1",
-    "unitymodule.common.factory": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/00001.unitymodule_common_factory_client.git#1.3.1",
-    "unitymodule.common.extension": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/00001.unitymodule_common_extension_client.git#1.3.1",
-	"unitymodule.common.func": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/00001.unitymodule_common_func_client.git#1.3.1",
-	"unitymodule.common.utility": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/00001.unitymodule_common_utility_client.git#1.3.1",
-    "unitymodule.common.externals": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/00001.unitymodule_common_externals_client.git#1.3.1"
+	"unitymodule.common.define": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/000001.unitymodule_common_define_client.git#1.3.1",
+    "unitymodule.common.access": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/000001.unitymodule_common_access_client.git#1.3.1",
+    "unitymodule.common.factory": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/000001.unitymodule_common_factory_client.git#1.3.1",
+    "unitymodule.common.extension": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/000001.unitymodule_common_extension_client.git#1.3.1",
+	"unitymodule.common.func": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/000001.unitymodule_common_func_client.git#1.3.1",
+	"unitymodule.common.utility": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/000001.unitymodule_common_utility_client.git#1.3.1",
+    "unitymodule.common.externals": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/000001.unitymodule_common_externals_client.git#1.3.1"
   }
 }
