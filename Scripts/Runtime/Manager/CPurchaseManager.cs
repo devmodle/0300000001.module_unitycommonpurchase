@@ -48,7 +48,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	#endregion			// 프로퍼티
 
 	#region 인터페이스
-	//! 초기화 되었을 경우
+	// 초기화 되었을 경우
 	public void OnInitialized(IStoreController a_oController, IExtensionProvider a_oProvider) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_CALLBACK, () => {
