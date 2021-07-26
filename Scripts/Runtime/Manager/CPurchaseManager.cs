@@ -22,6 +22,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	private STParams m_stParams;
 	
 	private bool m_bIsPurchasing = false;
+	private HashSet<string> m_oPurchaseProductIDList = new HashSet<string>();
 	private Dictionary<string, System.Action<CPurchaseManager, string, bool>> m_oPurchaseCallbackList = new Dictionary<string, System.Action<CPurchaseManager, string, bool>>();
 
 	private System.Action<CPurchaseManager, bool> m_oInitCallback = null;
@@ -34,8 +35,6 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	#endregion			// 변수
 
 	#region 프로퍼티
-	public List<string> PurchaseProductIDList { get; private set; } = new List<string>();
-	
 	public bool IsInit {
 		get {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -82,7 +81,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		try {
 			// 결제 중 일 경우
 			if(m_bIsPurchasing) {
-				this.PurchaseProductIDList.ExAddVal(oID);
+				m_oPurchaseProductIDList.Add(oID);
 				this.SavePurchaseProductIDs();
 			}
 
@@ -104,7 +103,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #endif			// #if RECEIPT_CHECK_ENABLE
 		} catch(System.Exception oException) {
 			CFunc.ShowLogWarning("CPurchaseManager.ProcessPurchase Exception: {0}", oException.Message);
-			this.PurchaseProductIDList.ExRemoveVal(oID);
+			m_oPurchaseProductIDList.ExRemoveVal(oID);
 
 			this.SavePurchaseProductIDs();
 			this.HandlePurchaseResult(oID, false, true, true);
@@ -228,7 +227,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			m_oPurchaseCallbackList.Add(a_oID, a_oCallback);
 
 			// 결제 된 상품 일 경우
-			if(this.PurchaseProductIDList.Contains(a_oID) || this.IsPurchaseNonConsumableProduct(oProduct)) {
+			if(m_oPurchaseProductIDList.Contains(a_oID) || this.IsPurchaseNonConsumableProduct(oProduct)) {
 				this.HandlePurchaseResult(a_oID, true, true);
 			} else {
 				m_oStoreController.InitiatePurchase(a_oID);
@@ -280,7 +279,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			// 확정 가능 할 경우
 			if(bIsEnablePurchase && m_oPurchaseCallbackList.ContainsKey(a_oProductID)) {
 				m_oStoreController.ConfirmPendingPurchase(oProduct);
-				this.PurchaseProductIDList.ExRemoveVal(a_oProductID);
+				m_oPurchaseProductIDList.ExRemoveVal(a_oProductID);
 				
 				this.SavePurchaseProductIDs();
 				this.HandlePurchaseResult(a_oProductID, true, false, true);
@@ -301,8 +300,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	//! 결제 상품 식별자를 저장한다
 	private void SavePurchaseProductIDs() {
-		CFunc.ShowLog($"CPurchaseManager.SavePurchaseProductIDs: {this.PurchaseProductIDList}, {this.PurchaseProductIDList.Count}", KCDefine.B_LOG_COLOR_PLUGIN);
-		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_LIST, this.PurchaseProductIDList);
+		CFunc.ShowLog($"CPurchaseManager.SavePurchaseProductIDs: {m_oPurchaseProductIDList}, {m_oPurchaseProductIDList.Count}", KCDefine.B_LOG_COLOR_PLUGIN);
+		CFunc.WriteMsgPackObj<HashSet<string>>(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_LIST, m_oPurchaseProductIDList);
 	}
 
 	//! 결제 상품 식별자를 로드한다
@@ -311,8 +310,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 		// 파일이 존재 할 경우
 		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_LIST)) {
-			this.PurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_LIST);
-			CFunc.ShowLog($"CPurchaseManager.OnLoadPurchaseProductIDs: {this.PurchaseProductIDList}, {this.PurchaseProductIDList.Count}", KCDefine.B_LOG_COLOR_PLUGIN);
+			m_oPurchaseProductIDList = CFunc.ReadMsgPackObj<HashSet<string>>(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_LIST);
+			CFunc.ShowLog($"CPurchaseManager.OnLoadPurchaseProductIDs: {m_oPurchaseProductIDList}, {m_oPurchaseProductIDList.Count}", KCDefine.B_LOG_COLOR_PLUGIN);
 		}
 	}
 
@@ -359,7 +358,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 						oProductList.ExAddVal(oProducts[i]);
 					}
 
-					this.PurchaseProductIDList.ExRemoveVal(oProducts[i].definition.id);
+					m_oPurchaseProductIDList.ExRemoveVal(oProducts[i].definition.id);
 				}
 				
 				this.SavePurchaseProductIDs();
