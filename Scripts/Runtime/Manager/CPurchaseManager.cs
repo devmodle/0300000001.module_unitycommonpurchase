@@ -299,12 +299,6 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 	#region 조건부 함수
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-	//! 결제 상품 식별자를 저장한다
-	private void SavePurchaseProductIDs() {
-		CFunc.ShowLog($"CPurchaseManager.SavePurchaseProductIDs: {m_oPurchaseProductIDSet}, {m_oPurchaseProductIDSet.Count}", KCDefine.B_LOG_COLOR_PLUGIN);
-		CFunc.WriteMsgPackObj<HashSet<string>>(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_SET, m_oPurchaseProductIDSet);
-	}
-
 	//! 결제 상품 식별자를 로드한다
 	private void LoadPurchaseProductIDs() {
 		CFunc.ShowLog("CPurchaseManager.LoadPurchaseProductIDs", KCDefine.B_LOG_COLOR_PLUGIN);
@@ -314,6 +308,12 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			m_oPurchaseProductIDSet = CFunc.ReadMsgPackObj<HashSet<string>>(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_SET);
 			CFunc.ShowLog($"CPurchaseManager.OnLoadPurchaseProductIDs: {m_oPurchaseProductIDSet}, {m_oPurchaseProductIDSet.Count}", KCDefine.B_LOG_COLOR_PLUGIN);
 		}
+	}
+
+	//! 결제 상품 식별자를 저장한다
+	private void SavePurchaseProductIDs() {
+		CFunc.ShowLog($"CPurchaseManager.SavePurchaseProductIDs: {m_oPurchaseProductIDSet}, {m_oPurchaseProductIDSet.Count}", KCDefine.B_LOG_COLOR_PLUGIN);
+		CFunc.WriteMsgPackObj<HashSet<string>>(KCDefine.U_DATA_P_PURCHASE_M_PRODUCT_ID_SET, m_oPurchaseProductIDSet);
 	}
 
 	//! 결제 결과를 처리한다
