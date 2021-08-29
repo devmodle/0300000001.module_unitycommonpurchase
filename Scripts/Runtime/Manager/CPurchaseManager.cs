@@ -21,7 +21,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 	//! 콜백 매개 변수
 	public struct STCallbackParams {
-		public System.Action<CPurchaseManager, bool> m_oInitCallback;
+		public System.Action<CPurchaseManager, bool> m_oCallback;
 	}
 
 	#region 변수
@@ -54,7 +54,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 	#region 인터페이스
 	// 초기화 되었을 경우
-	public void OnInitialized(IStoreController a_oController, IExtensionProvider a_oProvider) {
+	public virtual void OnInitialized(IStoreController a_oController, IExtensionProvider a_oProvider) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_CALLBACK, () => {
 			CFunc.ShowLog("CPurchaseManager.OnInitialized", KCDefine.B_LOG_COLOR_PLUGIN);
@@ -62,23 +62,23 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			m_oStoreController = a_oController;
 			m_oExtensionProvider = a_oProvider;
 
-			CFunc.Invoke(ref m_stCallbackParams.m_oInitCallback, this, this.IsInit);
+			CFunc.Invoke(ref m_stCallbackParams.m_oCallback, this, this.IsInit);
 		});
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 
 	//! 초기화에 실패했을 경우
-	public void OnInitializeFailed(InitializationFailureReason a_eReason) {
+	public virtual void OnInitializeFailed(InitializationFailureReason a_eReason) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
 			CFunc.ShowLogWarning("CPurchaseManager.OnInitializeFailed: {0}", a_eReason);
-			CFunc.Invoke(ref m_stCallbackParams.m_oInitCallback, this, false);
+			CFunc.Invoke(ref m_stCallbackParams.m_oCallback, this, false);
 		});
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 
 	//! 결제를 진행 중 일 경우
-	public PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs a_oArgs) {
+	public virtual PurchaseProcessingResult ProcessPurchase(PurchaseEventArgs a_oArgs) {
 		CFunc.ShowLog($"CPurchaseManager.ProcessPurchase: {a_oArgs.purchasedProduct.definition.id}", KCDefine.B_LOG_COLOR_PLUGIN);
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -120,7 +120,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 	}
 
 	//! 결제에 실패했을 경우
-	public void OnPurchaseFailed(Product a_oProduct, PurchaseFailureReason a_eReason) {
+	public virtual void OnPurchaseFailed(Product a_oProduct, PurchaseFailureReason a_eReason) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_FAIL_CALLBACK, () => {
 			string oID = a_oProduct.definition.id;
@@ -155,7 +155,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		// 초기화 되었을 경우
 		if(this.IsInit) {
-			a_stCallbackParams.m_oInitCallback?.Invoke(this, true);
+			a_stCallbackParams.m_oCallback?.Invoke(this, true);
 		} else {
 			m_stParams = a_stParams;
 			m_stCallbackParams = a_stCallbackParams;
@@ -175,7 +175,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			UnityPurchasing.Initialize(this, oBuilder);
 		}
 #else
-		a_stCallbackParams.m_oInitCallback?.Invoke(this, false);
+		a_stCallbackParams.m_oCallback?.Invoke(this, false);
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 
