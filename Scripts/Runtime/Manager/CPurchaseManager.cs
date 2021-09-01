@@ -8,9 +8,9 @@ using MessagePack;
 #if PURCHASE_MODULE_ENABLE
 using UnityEngine.Purchasing;
 
-#if RECEIPT_CHECK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
+#if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
 using UnityEngine.Purchasing.Security;
-#endif			// #if RECEIPT_CHECK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
+#endif			// #if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
 
 //! 인앱 결제 관리자
 public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
