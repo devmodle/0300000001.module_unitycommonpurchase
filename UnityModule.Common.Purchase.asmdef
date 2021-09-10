@@ -1,5 +1,6 @@
 {
     "name": "UnityModule.Common.Purchase",
+    "rootNamespace": "",
     "references": [
         "UnityModule.Common.Define",
         "UnityModule.Common.Access",
@@ -8,10 +9,10 @@
         "UnityModule.Common.Utility",
         "MessagePack",
         "UnityEngine.Purchasing",
-		“UnityEngine.Purchasing.Stores”,
-		“UnityEngine.Purchasing.Security”,
-		“UnityEngine.Purchasing.SecurityCore”,
-		“UnityEngine.Purchasing.SecurityStub”,
+        "UnityEngine.Purchasing.Security",
+        "UnityEngine.Purchasing.SecurityCore",
+        "UnityEngine.Purchasing.SecurityStub",
+        "UnityEngine.Purchasing.Stores",
         "UnityModule.UnityPurchasing",
         "UnityModule.UnityPurchasing.IAP_3"
     ],
