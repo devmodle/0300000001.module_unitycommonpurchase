@@ -8,6 +8,10 @@
         "UnityModule.Common.Utility",
         "MessagePack",
         "UnityEngine.Purchasing",
+		“UnityEngine.Purchasing.Stores”,
+		“UnityEngine.Purchasing.Security”,
+		“UnityEngine.Purchasing.SecurityCore”,
+		“UnityEngine.Purchasing.SecurityStub”,
         "UnityModule.UnityPurchasing",
         "UnityModule.UnityPurchasing.IAP_3"
     ],
