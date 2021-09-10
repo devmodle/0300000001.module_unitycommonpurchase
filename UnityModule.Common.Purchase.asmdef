@@ -9,6 +9,7 @@
         "MessagePack",
         "UnityEngine.Purchasing",
         "UnityModule.UnityPurchasing"
+        "UnityModule.UnityPurchasing.IAP_3"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
