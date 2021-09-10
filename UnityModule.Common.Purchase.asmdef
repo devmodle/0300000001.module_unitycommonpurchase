@@ -8,7 +8,7 @@
         "UnityModule.Common.Utility",
         "MessagePack",
         "UnityEngine.Purchasing",
-        "UnityModule.UnityPurchasing"
+        "UnityModule.UnityPurchasing",
         "UnityModule.UnityPurchasing.IAP_3"
     ],
     "includePlatforms": [],
