@@ -13,6 +13,7 @@
         "MessagePack",
         "MessagePack.Annotations",
         "UnityEngine.Purchasing",
+		"UnityModule.UnityPurchasing.IAP_3",
 		"UnityEngine.Purchasing.Stores",
 		"UnityEngine.Purchasing.Security",
 		"UnityEngine.Purchasing.SecurityCore",
