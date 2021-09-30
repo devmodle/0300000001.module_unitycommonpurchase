@@ -230,7 +230,7 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 		// 결제 가능 할 경우
 		if(bIsEnablePurchase && !m_oPurchaseCallbackDict.ContainsKey(a_oID)) {
 			m_bIsPurchasing = true;
-			m_oPurchaseCallbackDict.Add(a_oID, a_oCallback);
+			m_oPurchaseCallbackDict.ExAddVal(a_oID, a_oCallback);
 
 			// 결제 된 상품 일 경우
 			if(m_oPurchaseProductIDList.Contains(a_oID) || this.IsPurchaseNonConsumableProduct(oProduct)) {
