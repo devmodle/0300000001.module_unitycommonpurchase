@@ -12,6 +12,7 @@
         "Module.UnityCommonExternals",
         "MessagePack",
         "MessagePack.Annotations",
+        "UnityEditor.Purchasing",
         "UnityEngine.Purchasing",
         "UnityEngine.Purchasing.Stores",
         "UnityEngine.Purchasing.Security",
