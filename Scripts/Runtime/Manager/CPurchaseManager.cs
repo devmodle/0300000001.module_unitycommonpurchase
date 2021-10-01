@@ -8,6 +8,11 @@ using MessagePack;
 #if PURCHASE_MODULE_ENABLE
 using UnityEngine.Purchasing;
 
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.Purchasing;
+#endif			// #if UNITY_EDITOR
+
 #if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
 using UnityEngine.Purchasing.Security;
 #endif			// #if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
