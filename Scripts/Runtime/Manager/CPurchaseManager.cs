@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,6 +8,7 @@ using MessagePack;
 
 #if PURCHASE_MODULE_ENABLE
 using UnityEngine.Purchasing;
+using UnityEngine.Purchasing.Extension;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -19,26 +21,9 @@ using UnityEngine.Purchasing.Security;
 
 //! 인앱 결제 관리자
 public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
-#if ONE_STORE_PLATFORM
-	//! 원 스토어 매개 변수
-	public struct STOneStoreParams {
-		public string m_oSDKKey;
-	}
-
-	//! 원 스토어 변수
-	private struct STOneStoreVar {
-		public bool m_bIsInit;
-		public List<ProductDetail> m_oProductDetailList;
-	}
-#endif			// #if ONE_STORE_PLATFORM
-
 	//! 매개 변수
 	public struct STParams {
 		public List<STProductInfo> m_oProductInfoList;
-
-#if ONE_STORE_PLATFORM
-		public STOneStoreParams m_stOneStoreParams;
-#endif			// #if ONE_STORE_PLATFORM
 	}
 
 	//! 콜백 매개 변수
@@ -46,15 +31,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		public System.Action<CPurchaseManager, bool> m_oCallback;
 	}
 
-	//! 변수
-	private struct STVar {
-#if ONE_STORE_PLATFORM
-		public STOneStoreVar m_stOneStoreVar;
-#endif			// #if ONE_STORE_PLATFORM
-	}
-
 	#region 변수
-	private STVar m_stVar;
 	private STParams m_stParams;
 	private STCallbackParams m_stCallbackParams;
 
@@ -82,7 +59,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 	#endregion			// 프로퍼티
 
-	#region 인터페이스
+	#region IStoreListener
 	// 초기화 되었을 경우
 	public virtual void OnInitialized(IStoreController a_oController, IExtensionProvider a_oProvider) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -118,7 +95,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			// 결제 중 일 경우
 			if(m_bIsPurchasing) {
 				m_oPurchaseProductIDList.Add(oID);
-				CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
+				this.SavePurchaseProductIDs();
 			}
 
 #if (UNITY_IOS || (UNITY_ANDROID && GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE
@@ -139,10 +116,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #endif			// #if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
 		} catch(System.Exception oException) {
 			CFunc.ShowLogWarning("CPurchaseManager.ProcessPurchase Exception: {0}", oException.Message);
-
 			m_oPurchaseProductIDList.ExRemoveVal(oID);
-			CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
 
+			this.SavePurchaseProductIDs();
 			this.HandlePurchaseResult(oID, false, true, true);
 		}
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -166,7 +142,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		});
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
-	#endregion			// 인터페이스
+	#endregion			// IStoreListener
 
 	#region 함수
 	//! 초기화
@@ -174,11 +150,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		base.Awake();
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		// 결제 상품 식별자 파일이 존재 할 경우
-		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
-			m_oPurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
-			CFunc.ShowLog($"CPurchaseManager.Awake: {m_oPurchaseProductIDList}, {m_oPurchaseProductIDList.Count}", KCDefine.B_LOG_COLOR_PLUGIN);
-		}
+		this.LoadPurchaseProductIDs();
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 
@@ -271,7 +243,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			if(m_oPurchaseProductIDList.Contains(a_oID) || this.IsPurchaseNonConsumableProduct(oProduct)) {
 				this.HandlePurchaseResult(a_oID, true, true);
 			} else {
-				m_oStoreController.InitiatePurchase(a_oID);
+				m_oStoreController.InitiatePurchase(oProduct, KCDefine.U_PAYLOAD_PURCHASE_M_PURCHASE);
 			}
 		} else {
 			a_oCallback?.Invoke(this, a_oID, false);
@@ -323,10 +295,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			// 확정 가능 할 경우
 			if(bIsEnablePurchase && m_oPurchaseCallback != null) {
 				m_oStoreController.ConfirmPendingPurchase(oProduct);
-
 				m_oPurchaseProductIDList.ExRemoveVal(a_oProductID);
-				CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
 
+				this.SavePurchaseProductIDs();
 				this.HandlePurchaseResult(a_oProductID, true, false, true);
 
 				m_bIsPurchasing = false;
@@ -343,6 +314,21 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	#region 조건부 함수
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
+	//! 결제 상품 식별자를 로드한다
+	private List<string> LoadPurchaseProductIDs() {
+		// 결제 상품 식별자 파일이 존재 할 경우
+		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
+			m_oPurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
+		}
+
+		return m_oPurchaseProductIDList;
+	}
+
+	//! 결제 상품 식별자를 저장한다
+	private void SavePurchaseProductIDs() {
+		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
+	}
+
 	//! 결제 결과를 처리한다
 	private void HandlePurchaseResult(string a_oProductID, bool a_bIsSuccess, bool a_bIsInvoke = true, bool a_bIsRemove = false) {
 		CFunc.ShowLog($"CPurchaseManager.HandlePurchaseResult: {a_oProductID}, {a_bIsSuccess}, {a_bIsInvoke}, {a_bIsRemove}", KCDefine.B_LOG_COLOR_PLUGIN);
@@ -382,7 +368,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 					m_oPurchaseProductIDList.ExRemoveVal(oProducts[i].definition.id);
 				}
-				
+
 				this.SavePurchaseProductIDs();
 				m_oRestoreCallback?.Invoke(this, oProductList, true);
 			}
@@ -401,8 +387,6 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if UNITY_ANDROID
 #if AMAZON_PLATFORM
 		UnityPurchasingEditor.TargetAndroidStore(AppStore.AmazonAppStore);
-#elif GALAXY_STORE_PLATFORM
-		UnityPurchasingEditor.TargetAndroidStore(AppStore.SamsungApps);
 #else
 		UnityPurchasingEditor.TargetAndroidStore(AppStore.GooglePlay);
 #endif			// #if AMAZON_PLATFORM
