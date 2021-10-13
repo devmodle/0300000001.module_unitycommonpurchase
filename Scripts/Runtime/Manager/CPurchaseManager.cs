@@ -92,6 +92,13 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			}
 
 #if RECEIPT_CHECK_ENABLE
+			// 10.13.2021 dy.lee | Amazon store 예외처리 추가 {
+#if STORE_TARGET_AMAZON
+			// 아마존 스토어인 경우 영수증 검사 로직을 넘어간다
+			this.HandlePurchaseResult(oID, true, true);
+			return PurchaseProcessingResult.Pending;
+#endif // STORE_TARGET_AMAZON
+#if !STORE_TARGET_AMAZON
 			var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
 			var oReceipts = oValidator.Validate(a_oArgs.purchasedProduct.receipt);
 			
@@ -103,6 +110,21 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			}
 
 			return oReceipts.ExIsValid() ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
+#endif // !STORE_TARGET_AMAZON
+			
+			// *** 수정 전 코드 ***
+			// var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
+			// var oReceipts = oValidator.Validate(a_oArgs.purchasedProduct.receipt);
+			
+			// // 영수증이 유효 할 경우
+			// if(oReceipts.ExIsValid()) {
+			// 	this.HandlePurchaseResult(oID, true, true);
+			// } else {
+			// 	this.HandlePurchaseResult(oID, false, true, true);
+			// }
+
+			// return oReceipts.ExIsValid() ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
+			// 10.13.2021 dy.lee | Amazon store 예외처리 추가 }
 #else
 			this.HandlePurchaseResult(oID, true, true);
 			return PurchaseProcessingResult.Pending;
@@ -262,7 +284,24 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			m_bIsPurchasing = true;
 			m_oRestoreCallback = a_oCallback;
 
-			oStoreExtension.RestoreTransactions(this.OnRestoreProducts);
+			// 10.13.2021 dy.lee | Amazon store 예외처리 추가 {
+
+#if STORE_TARGET_AMAZON
+			// 아마존 스토어인 경우
+			OnRestoreProducts(true);
+#endif // STORE_TARGET_AMAZON
+#if !STORE_TARGET_AMAZON
+				/*
+					아마존 스토어가 아니라면 각 스토어 Extension 에서 제공하는
+					RestoreTransactions 을 사용한다
+				*/
+				oStoreExtension.RestoreTransactions(this.OnRestoreProducts);
+#endif // !STORE_TARGET_AMAZON
+
+			// *** 수정 전 코드 ***
+			// oStoreExtension.RestoreTransactions(this.OnRestoreProducts);
+
+			// 10.13.2021 dy.lee | Amazon store 예외처리 추가 }
 		} else {
 			a_oCallback?.Invoke(this, null, false);
 		}
