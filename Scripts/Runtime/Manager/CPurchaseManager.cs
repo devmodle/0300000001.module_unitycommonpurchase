@@ -78,6 +78,13 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			}
 
 #if RECEIPT_CHECK_ENABLE
+
+#if STORE_TARGET_AMAZON
+			// 아마존 스토어인 경우 영수증 검사 로직을 넘어간다
+			this.HandlePurchaseResult(oID, true, true);
+			return PurchaseProcessingResult.Pending;
+#endif // STORE_TARGET_AMAZON
+#if !STORE_TARGET_AMAZON
 			var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), 
 				AppleTangle.Data(), Application.identifier);
 
@@ -92,6 +99,8 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 
 			return oReceipts.ExIsValid() ? 
 				PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
+#endif // !STORE_TARGET_AMAZON
+
 #else
 			this.HandlePurchaseResult(oID, true, true);
 			return PurchaseProcessingResult.Pending;
@@ -252,7 +261,18 @@ public class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
 			m_bIsPurchasing = true;
 			m_oRestoreCallback = a_oCallback;
 
-			oStoreExtension.RestoreTransactions(this.OnRestoreProducts);
+#if STORE_TARGET_AMAZON
+			// 아마존 스토어인 경우
+			OnRestoreProducts(true);
+#endif // STORE_TARGET_AMAZON
+#if !STORE_TARGET_AMAZON
+				/*
+					아마존 스토어가 아니라면 각 스토어 Extension 에서 제공하는
+					RestoreTransactions 을 사용한다
+				*/
+				oStoreExtension.RestoreTransactions(this.OnRestoreProducts);
+#endif // !STORE_TARGET_AMAZON
+
 		} else {
 			a_oCallback?.Invoke(this, null, false);
 		}
