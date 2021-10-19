@@ -94,14 +94,13 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		try {
 			// 결제 중 일 경우
 			if(m_bIsPurchasing) {
-				m_oPurchaseProductIDList.Add(oID);
-				this.SavePurchaseProductIDs();
+				this.AddPurchaseProductID(oID);
 			}
 
 #if (UNITY_IOS || (UNITY_ANDROID && GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE
 			var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
 			var oReceipts = oValidator.Validate(a_oArgs.purchasedProduct.receipt);
-			
+
 			// 영수증이 유효 할 경우
 			if(oReceipts.ExIsValid()) {
 				this.HandlePurchaseResult(oID, true, true);
@@ -109,16 +108,15 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				this.HandlePurchaseResult(oID, false, true, true);
 			}
 
-			return oReceipts.ExIsValid() ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
+			return (m_bIsPurchasing && oReceipts.ExIsValid()) ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
 #else
 			this.HandlePurchaseResult(oID, true, true);
-			return PurchaseProcessingResult.Pending;
+			return m_bIsPurchasing ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
 #endif			// #if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
 		} catch(System.Exception oException) {
 			CFunc.ShowLogWarning("CPurchaseManager.ProcessPurchase Exception: {0}", oException.Message);
-			m_oPurchaseProductIDList.ExRemoveVal(oID);
 
-			this.SavePurchaseProductIDs();
+			this.RemovePurchaseProductID(oID);
 			this.HandlePurchaseResult(oID, false, true, true);
 		}
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -150,7 +148,10 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		base.Awake();
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		this.LoadPurchaseProductIDs();
+		// 결제 상품 식별자 파일이 존재 할 경우
+		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
+			m_oPurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
+		}
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 
@@ -283,30 +284,29 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 	//! 결제를 확정한다
-	public void ConfirmPurchase(string a_oProductID, System.Action<CPurchaseManager, string, bool> a_oCallback) {
-		CFunc.ShowLog($"CPurchaseManager.ConfirmPurchase: {a_oProductID}", KCDefine.B_LOG_COLOR_PLUGIN);
-		CAccess.Assert(a_oProductID.ExIsValid());
+	public void ConfirmPurchase(string a_oID, System.Action<CPurchaseManager, string, bool> a_oCallback) {
+		CFunc.ShowLog($"CPurchaseManager.ConfirmPurchase: {a_oID}", KCDefine.B_LOG_COLOR_PLUGIN);
+		CAccess.Assert(a_oID.ExIsValid());
 
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_CONFIRM_CALLBACK, () => {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-			var oProduct = this.GetProduct(a_oProductID);
+			var oProduct = this.GetProduct(a_oID);
 			bool bIsEnablePurchase = this.IsInit && (oProduct != null && oProduct.availableToPurchase);
 
 			// 확정 가능 할 경우
 			if(bIsEnablePurchase && m_oPurchaseCallback != null) {
-				m_oStoreController.ConfirmPendingPurchase(oProduct);
-				m_oPurchaseProductIDList.ExRemoveVal(a_oProductID);
-
-				this.SavePurchaseProductIDs();
-				this.HandlePurchaseResult(a_oProductID, true, false, true);
-
 				m_bIsPurchasing = false;
-				a_oCallback?.Invoke(this, a_oProductID, true);
+				m_oStoreController.ConfirmPendingPurchase(oProduct);
+
+				this.RemovePurchaseProductID(a_oID);
+				this.HandlePurchaseResult(a_oID, true, false, true);
+
+				a_oCallback?.Invoke(this, a_oID, true);
 			} else {
-				a_oCallback?.Invoke(this, a_oProductID, false);
+				a_oCallback?.Invoke(this, a_oID, false);
 			}
 #else
-			a_oCallback?.Invoke(this, a_oProductID, false);
+			a_oCallback?.Invoke(this, a_oID, false);
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		});
 	}
@@ -314,19 +314,24 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	#region 조건부 함수
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-	//! 결제 상품 식별자를 로드한다
-	private List<string> LoadPurchaseProductIDs() {
-		// 결제 상품 식별자 파일이 존재 할 경우
-		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
-			m_oPurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
-		}
+	//! 결제 상품 식별자를 추가한다
+	private void AddPurchaseProductID(string a_oID, bool a_bIsAutoSave = true) {
+		m_oPurchaseProductIDList.ExAddVal(a_oID);
 
-		return m_oPurchaseProductIDList;
+		// 자동 저장 모드 일 경우
+		if(a_bIsAutoSave) {
+			CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
+		}
 	}
 
-	//! 결제 상품 식별자를 저장한다
-	private void SavePurchaseProductIDs() {
-		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
+	//! 결제 상품 식별자를 제거한다
+	private void RemovePurchaseProductID(string a_oID, bool a_bIsAutoSave = true) {
+		m_oPurchaseProductIDList.ExRemoveVal(a_oID);
+
+		// 자동 저장 모드 일 경우
+		if(a_bIsAutoSave) {
+			CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
+		}
 	}
 
 	//! 결제 결과를 처리한다
@@ -366,10 +371,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 						oProductList.ExAddVal(oProducts[i]);
 					}
 
-					m_oPurchaseProductIDList.ExRemoveVal(oProducts[i].definition.id);
+					this.RemovePurchaseProductID(oProducts[i].definition.id);
 				}
 
-				this.SavePurchaseProductIDs();
 				m_oRestoreCallback?.Invoke(this, oProductList, true);
 			}
 
