@@ -149,7 +149,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		// 결제 상품 식별자 파일이 존재 할 경우
 		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
-			m_oPurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, System.Text.Encoding.Default);
+			m_oPurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
 		}
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
@@ -316,7 +316,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 		// 자동 저장 모드 일 경우
 		if(a_bIsAutoSave) {
-			CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList, System.Text.Encoding.Default);
+			CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
 		}
 	}
 
@@ -326,7 +326,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 		// 자동 저장 모드 일 경우
 		if(a_bIsAutoSave) {
-			CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList, System.Text.Encoding.Default);
+			CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
 		}
 	}
 
