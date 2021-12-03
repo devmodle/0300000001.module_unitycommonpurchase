@@ -77,10 +77,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	public virtual void OnInitializeFailed(InitializationFailureReason a_eReason) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		CFunc.ShowLogWarning($"CPurchaseManager.OnInitializeFailed: {a_eReason}");
-
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
-			CFunc.Invoke(ref m_stCallbackParams.m_oCallback, this, false);
-		});
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => CFunc.Invoke(ref m_stCallbackParams.m_oCallback, this, false));
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 
