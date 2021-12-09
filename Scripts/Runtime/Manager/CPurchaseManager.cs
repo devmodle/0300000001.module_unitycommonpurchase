@@ -93,7 +93,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				this.AddPurchaseProductID(oID);
 			}
 
-#if (UNITY_IOS || (UNITY_ANDROID && GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE
+#if !UNITY_EDITOR && ((UNITY_IOS || (UNITY_ANDROID && GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE)
 			var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
 			var oReceipts = oValidator.Validate(a_oArgs.purchasedProduct.receipt);
 
@@ -108,7 +108,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #else
 			this.HandlePurchaseResult(oID, true, true);
 			return this.IsPurchasing ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
-#endif			// #if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
+#endif			// #if !UNITY_EDITOR && ((UNITY_IOS || (UNITY_ANDROID && GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE)
 		} catch(System.Exception oException) {
 			CFunc.ShowLogWarning($"CPurchaseManager.ProcessPurchase Exception: {oException.Message}");
 
