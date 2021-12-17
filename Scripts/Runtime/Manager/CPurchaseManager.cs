@@ -333,12 +333,14 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CAccess.Assert(a_oProductID.ExIsValid());
 
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_RESULT_CALLBACK, () => {
-			// 호출 모드 일 경우
-			if(a_bIsInvoke) {
-				m_oPurchaseCallback?.Invoke(this, a_oProductID, a_bIsSuccess);
+			try {
+				// 호출 모드 일 경우
+				if(a_bIsInvoke) {
+					m_oPurchaseCallback?.Invoke(this, a_oProductID, a_bIsSuccess);
+				}
+			} finally {
+				m_oPurchaseCallback = a_bIsComplete ? null : m_oPurchaseCallback;
 			}
-
-			m_oPurchaseCallback = a_bIsComplete ? null : m_oPurchaseCallback;
 		});
 	}
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
