@@ -93,7 +93,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				this.AddPurchaseProductID(oID);
 			}
 
-#if !UNITY_EDITOR && ((UNITY_IOS || (UNITY_ANDROID && GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE)
+#if !UNITY_EDITOR && ((UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE)
 			var oValidator = new CrossPlatformValidator(GooglePlayTangle.Data(), AppleTangle.Data(), Application.identifier);
 			var oReceipts = oValidator.Validate(a_oArgs.purchasedProduct.receipt);
 
@@ -108,7 +108,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #else
 			this.HandlePurchaseResult(oID, true, true);
 			return this.IsPurchasing ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
-#endif			// #if !UNITY_EDITOR && ((UNITY_IOS || (UNITY_ANDROID && GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE)
+#endif			// #if !UNITY_EDITOR && ((UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE)
 		} catch(System.Exception oException) {
 			CFunc.ShowLogWarning($"CPurchaseManager.ProcessPurchase Exception: {oException.Message}");
 
@@ -258,7 +258,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		if(this.IsInit && !this.IsPurchasing) {
 			m_oRestoreCallback = a_oCallback;
 
-#if UNITY_IOS || (UNITY_ANDROID && GOOGLE_PLATFORM)
+#if UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)
 #if UNITY_IOS
 			var oStoreExtension = m_oExtensionProvider.GetExtension<IAppleExtensions>();
 #else
@@ -268,7 +268,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			oStoreExtension.RestoreTransactions(this.OnRestoreProducts);
 #else
 			this.OnRestoreProducts(true);
-#endif			// #if UNITY_IOS || (UNITY_ANDROID && GOOGLE_PLATFORM)
+#endif			// #if UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)
 		} else {
 			a_oCallback?.Invoke(this, null, false);
 		}
@@ -377,11 +377,11 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	[InitializeOnLoadMethod]
 	public static void EditorInitialize() {
 #if UNITY_ANDROID
-#if AMAZON_PLATFORM
+#if ANDROID_AMAZON_PLATFORM
 		UnityPurchasingEditor.TargetAndroidStore(AppStore.AmazonAppStore);
 #else
 		UnityPurchasingEditor.TargetAndroidStore(AppStore.GooglePlay);
-#endif			// #if AMAZON_PLATFORM
+#endif			// #if ANDROID_AMAZON_PLATFORM
 #endif			// #if UNITY_ANDROID
 	}
 #endif			// #if UNITY_EDITOR
