@@ -168,9 +168,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 			for(int i = 0; i < a_stParams.m_oProductInfoList.Count; ++i) {
 				CAccess.Assert(a_stParams.m_oProductInfoList[i].m_oID.ExIsValid() && a_stParams.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
-
-				var oProductDefinition = new ProductDefinition(a_stParams.m_oProductInfoList[i].m_oID, a_stParams.m_oProductInfoList[i].m_eProductType);
-				oProductDefinitionList.ExAddVal(oProductDefinition);
+				oProductDefinitionList.ExAddVal(new ProductDefinition(a_stParams.m_oProductInfoList[i].m_oID, a_stParams.m_oProductInfoList[i].m_eProductType));
 			}
 			
 			var oBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
