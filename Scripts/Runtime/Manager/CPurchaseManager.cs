@@ -146,7 +146,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		// 결제 상품 식별자 파일이 존재 할 경우
 		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
-			m_oPurchaseProductIDList = CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
+			m_oPurchaseProductIDList = this.LoadPurchaseProductIDs();
 		}
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
@@ -306,23 +306,33 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	#region 조건부 함수
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	/** 결제 상품 식별자를 추가한다 */
-	private void AddPurchaseProductID(string a_oID, bool a_bIsAutoSave = true) {
+	private void AddPurchaseProductID(string a_oID) {
 		m_oPurchaseProductIDList.ExAddVal(a_oID);
-
-		// 자동 저장 모드 일 경우
-		if(a_bIsAutoSave) {
-			CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
-		}
+		this.SavePurchaseProductIDs(m_oPurchaseProductIDList);
 	}
 
 	/** 결제 상품 식별자를 제거한다 */
-	private void RemovePurchaseProductID(string a_oID, bool a_bIsAutoSave = true) {
+	private void RemovePurchaseProductID(string a_oID) {
 		m_oPurchaseProductIDList.ExRemoveVal(a_oID);
+		this.SavePurchaseProductIDs(m_oPurchaseProductIDList);
+	}
 
-		// 자동 저장 모드 일 경우
-		if(a_bIsAutoSave) {
-			CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, m_oPurchaseProductIDList);
-		}
+	/** 결제 상품 식별자를 로드한다 */
+	private List<string> LoadPurchaseProductIDs() {
+#if MSG_PACK_ENABLE
+		return CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
+#else
+		return CFunc.ReadJSONObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
+#endif			// #if MSG_PACK_ENABLE
+	}
+
+	/** 결제 상품 식별자를 저장한다 */
+	private void SavePurchaseProductIDs(List<string> a_oPurchaseProductIDList) {
+#if MSG_PACK_ENABLE
+		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList);
+#else
+		CFunc.WriteJSONObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList);
+#endif			// #if MSG_PACK_ENABLE
 	}
 
 	/** 결제 결과를 처리한다 */
