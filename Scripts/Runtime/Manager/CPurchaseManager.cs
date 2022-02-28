@@ -143,12 +143,12 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	public override void Awake() {
 		base.Awake();
 
-#if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
+#if (UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)) && (MSG_PACK_ENABLE || NEWTON_SOFT_JSON_MODULE_ENABLE)
 		// 결제 상품 식별자 파일이 존재 할 경우
 		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
 			m_oPurchaseProductIDList = this.LoadPurchaseProductIDs();
 		}
-#endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
+#endif			// #if (UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)) && (MSG_PACK_ENABLE || NEWTON_SOFT_JSON_MODULE_ENABLE)
 	}
 
 	/** 초기화 */
@@ -321,8 +321,10 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	private List<string> LoadPurchaseProductIDs() {
 #if MSG_PACK_ENABLE
 		return CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
-#else
+#elif NEWTON_SOFT_JSON_MODULE_ENABLE
 		return CFunc.ReadJSONObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
+#else
+		return null;
 #endif			// #if MSG_PACK_ENABLE
 	}
 
@@ -330,7 +332,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	private void SavePurchaseProductIDs(List<string> a_oPurchaseProductIDList) {
 #if MSG_PACK_ENABLE
 		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList);
-#else
+#elif NEWTON_SOFT_JSON_MODULE_ENABLE
 		CFunc.WriteJSONObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList);
 #endif			// #if MSG_PACK_ENABLE
 	}
