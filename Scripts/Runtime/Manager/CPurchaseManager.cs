@@ -19,24 +19,32 @@ using UnityEngine.Purchasing.Security;
 
 /** 인앱 결제 관리자 */
 public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
+	/** 콜백 */
+	public enum ECallback {
+		NONE = -1,
+		INIT,
+		[HideInInspector] MAX_VAL
+	}
+
+	/** 결제 콜백 */
+	private enum EPurchaseCallback {
+		NONE = -1,
+		PURCHASE,
+		RESTORE,
+		[HideInInspector] MAX_VAL
+	}
+
 	/** 매개 변수 */
 	public struct STParams {
 		public List<STProductInfo> m_oProductInfoList;
-	}
-
-	/** 콜백 매개 변수 */
-	public struct STCallbackParams {
-		public System.Action<CPurchaseManager, bool> m_oCallback;
+		public Dictionary<ECallback, System.Action<CPurchaseManager, bool>> m_oCallbackDict;
 	}
 
 	#region 변수
 	private STParams m_stParams;
-	private STCallbackParams m_stCallbackParams;
-
 	private List<string> m_oPurchaseProductIDList = new List<string>();
-
-	private System.Action<CPurchaseManager, string, bool> m_oPurchaseCallback = null;
-	private System.Action<CPurchaseManager, List<Product>, bool> m_oRestoreCallback = null;
+	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>> m_oCallbackDictA = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>>();
+	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>> m_oCallbackDictB = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>>();
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	private IStoreController m_oStoreController = null;
@@ -55,7 +63,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		}
 	}
 
-	public bool IsPurchasing => m_oPurchaseCallback != null && m_oRestoreCallback != null;
+	public bool IsPurchasing => m_oCallbackDictA.GetValueOrDefault(EPurchaseCallback.PURCHASE, null) != null || m_oCallbackDictB.GetValueOrDefault(EPurchaseCallback.RESTORE, null) != null;
 	#endregion			// 프로퍼티
 
 	#region IStoreListener
@@ -67,8 +75,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_CALLBACK, () => {
 			m_oStoreController = a_oController;
 			m_oExtensionProvider = a_oProvider;
-
-			CFunc.Invoke(ref m_stCallbackParams.m_oCallback, this, this.IsInit);
+			m_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
 		});
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
@@ -77,7 +84,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	public virtual void OnInitializeFailed(InitializationFailureReason a_eReason) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		CFunc.ShowLogWarning($"CPurchaseManager.OnInitializeFailed: {a_eReason}");
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => CFunc.Invoke(ref m_stCallbackParams.m_oCallback, this, false));
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => m_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, false));
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 
@@ -152,18 +159,16 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 	/** 초기화 */
-	public virtual void Init(STParams a_stParams, STCallbackParams a_stCallbackParams) {
+	public virtual void Init(STParams a_stParams) {
 		CFunc.ShowLog($"CPurchaseManager.Init: {a_stParams.m_oProductInfoList}", KCDefine.B_LOG_COLOR_PLUGIN);
 		CAccess.Assert(a_stParams.m_oProductInfoList != null);
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		// 초기화 되었을 경우
 		if(this.IsInit) {
-			a_stCallbackParams.m_oCallback?.Invoke(this, true);
+			a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, true);
 		} else {
 			m_stParams = a_stParams;
-			m_stCallbackParams = a_stCallbackParams;
-
 			var oProductDefinitionList = new List<ProductDefinition>();
 
 			for(int i = 0; i < a_stParams.m_oProductInfoList.Count; ++i) {
@@ -177,7 +182,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			UnityPurchasing.Initialize(this, oBuilder);
 		}
 #else
-		a_stCallbackParams.m_oCallback?.Invoke(this, false);
+		a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, false);
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 
@@ -231,7 +236,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 		// 결제 가능 할 경우
 		if(bIsEnablePurchase && !this.IsPurchasing) {
-			m_oPurchaseCallback = a_oCallback;
+			m_oCallbackDictA.TryAdd(EPurchaseCallback.PURCHASE, a_oCallback);
 
 			// 결제 된 상품 일 경우
 			if(m_oPurchaseProductIDList.Contains(a_oID) || this.IsPurchaseNonConsumableProduct(oProduct)) {
@@ -240,10 +245,10 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				m_oStoreController.InitiatePurchase(oProduct, KCDefine.U_PAYLOAD_PURCHASE_M_PURCHASE);
 			}
 		} else {
-			a_oCallback?.Invoke(this, a_oID, false);
+			CFunc.Invoke(ref a_oCallback, this, a_oID, false);
 		}
 #else
-		a_oCallback?.Invoke(this, a_oID, false);
+		CFunc.Invoke(ref a_oCallback, this, a_oID, false);
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 	
@@ -254,7 +259,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
 		// 초기화 되었을 경우
 		if(this.IsInit && !this.IsPurchasing) {
-			m_oRestoreCallback = a_oCallback;
+			m_oCallbackDictB.TryAdd(EPurchaseCallback.RESTORE, a_oCallback);
 
 #if UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)
 #if UNITY_IOS
@@ -268,10 +273,10 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			this.OnRestoreProducts(true);
 #endif			// #if UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)
 		} else {
-			a_oCallback?.Invoke(this, null, false);
+			CFunc.Invoke(ref a_oCallback, this, null, false);
 		}
 #else
-		a_oCallback?.Invoke(this, null, false);
+		CFunc.Invoke(ref a_oCallback, this, null, false);
 #endif			// #if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
 	}
 
@@ -290,14 +295,12 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				m_oStoreController.ConfirmPendingPurchase(oProduct);
 
 				this.RemovePurchaseProductID(a_oID);
-				this.HandlePurchaseResult(a_oID, true, false, true);
-
-				a_oCallback?.Invoke(this, a_oID, true);
+				this.HandlePurchaseResult(a_oID, true, true, true);
 			} else {
-				a_oCallback?.Invoke(this, a_oID, false);
+				CFunc.Invoke(ref a_oCallback, this, a_oID, false);
 			}
 #else
-			a_oCallback?.Invoke(this, a_oID, false);
+			CFunc.Invoke(ref a_oCallback, this, a_oID, false);
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		});
 	}
@@ -343,14 +346,17 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CAccess.Assert(a_oProductID.ExIsValid());
 
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_RESULT_CALLBACK, () => {
-			var oCallback = m_oPurchaseCallback;
+			var oCallback = m_oCallbackDictA.GetValueOrDefault(EPurchaseCallback.PURCHASE, null);
 
 			try {
-				m_oPurchaseCallback = a_bIsComplete ? null : m_oPurchaseCallback;
+				// 완료 되었을 경우
+				if(a_bIsComplete) {
+					m_oCallbackDictA.ExReplaceVal(EPurchaseCallback.PURCHASE, null);
+				}
 			} finally {
 				// 호출 모드 일 경우
 				if(a_bIsInvoke) {
-					oCallback?.Invoke(this, a_oProductID, a_bIsSuccess);
+					CFunc.Invoke(ref oCallback, this, a_oProductID, a_bIsSuccess);
 				}
 			}
 		});
@@ -363,6 +369,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CFunc.ShowLog($"CPurchaseManager.OnRestoreProducts: {a_bIsSuccess}", KCDefine.B_LOG_COLOR_PLUGIN);
 
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_RESTORE_CALLBACK, () => {
+			var oCallback = m_oCallbackDictB.GetValueOrDefault(EPurchaseCallback.RESTORE, null);
 			var oProductList = new List<Product>();
 
 			// 성공했을 경우
@@ -377,7 +384,11 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				}
 			}
 
-			CFunc.Invoke(ref m_oRestoreCallback, this, oProductList, a_bIsSuccess);
+			try {
+				m_oCallbackDictB.ExReplaceVal(EPurchaseCallback.RESTORE, null);
+			} finally {
+				CFunc.Invoke(ref oCallback, this, oProductList, a_bIsSuccess);
+			}
 		});
 	}
 #endif			// #if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
