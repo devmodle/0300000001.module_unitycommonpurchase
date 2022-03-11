@@ -1,18 +1,18 @@
 {
   "name": "module.unitycommonpurchase",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "displayName": "Module.UnityCommonPurchase",
   "author": {
     "name": "dante",
     "email": "are2341@nate.com"
   },
   "dependencies": {
-	"module.unitycommondefine": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommondefine_client.git#2.1.4",
-    "module.unitycommonaccess": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonaccess_client.git#2.1.4",
-    "module.unitycommonfactory": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonfactory_client.git#2.1.4",
-    "module.unitycommonextension": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonextension_client.git#2.1.4",
-	"module.unitycommonfunc": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonfunc_client.git#2.1.4",
-	"module.unitycommonutility": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonutility_client.git#2.1.4",
-    "module.unitycommonexternals": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonexternals_client.git#2.1.4"
+	"module.unitycommondefine": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommondefine_client.git#2.1.5",
+    "module.unitycommonaccess": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonaccess_client.git#2.1.5",
+    "module.unitycommonfactory": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonfactory_client.git#2.1.5",
+    "module.unitycommonextension": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonextension_client.git#2.1.5",
+	"module.unitycommonfunc": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonfunc_client.git#2.1.5",
+	"module.unitycommonutility": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonutility_client.git#2.1.5",
+    "module.unitycommonexternals": "https://9tap:NT9studio!@gitlab.com/9tapmodule.repository/03000001.module_unitycommonexternals_client.git#2.1.5"
   }
 }
