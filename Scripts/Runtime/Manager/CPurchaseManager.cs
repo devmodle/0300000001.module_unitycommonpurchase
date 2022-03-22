@@ -43,8 +43,14 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	#region 변수
 	private STParams m_stParams;
 	private List<string> m_oPurchaseProductIDList = new List<string>();
-	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>> m_oCallbackDictA = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>>();
-	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>> m_oCallbackDictB = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>>();
+
+	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>> m_oCallbackDictA = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>>() {
+		[EPurchaseCallback.PURCHASE] = null
+	};
+
+	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>> m_oCallbackDictB = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>>() {
+		[EPurchaseCallback.RESTORE] = null
+	};
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	private IStoreController m_oStoreController = null;
@@ -63,7 +69,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		}
 	}
 
-	public bool IsPurchasing => m_oCallbackDictA.GetValueOrDefault(EPurchaseCallback.PURCHASE, null) != null || m_oCallbackDictB.GetValueOrDefault(EPurchaseCallback.RESTORE, null) != null;
+	public bool IsPurchasing => m_oCallbackDictA[EPurchaseCallback.PURCHASE] != null || m_oCallbackDictB[EPurchaseCallback.RESTORE] != null;
 	#endregion			// 프로퍼티
 
 	#region IStoreListener
@@ -236,7 +242,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 		// 결제 가능 할 경우
 		if(bIsEnablePurchase && !this.IsPurchasing) {
-			m_oCallbackDictA.TryAdd(EPurchaseCallback.PURCHASE, a_oCallback);
+			m_oCallbackDictA[EPurchaseCallback.PURCHASE] = a_oCallback;
 
 			// 결제 된 상품 일 경우
 			if(m_oPurchaseProductIDList.Contains(a_oID) || this.IsPurchaseNonConsumableProduct(oProduct)) {
@@ -259,7 +265,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if !UNITY_EDITOR && (UNITY_IOS || UNITY_ANDROID)
 		// 초기화 되었을 경우
 		if(this.IsInit && !this.IsPurchasing) {
-			m_oCallbackDictB.TryAdd(EPurchaseCallback.RESTORE, a_oCallback);
+			m_oCallbackDictB[EPurchaseCallback.RESTORE] = a_oCallback;
 
 #if UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)
 #if UNITY_IOS
@@ -346,7 +352,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CAccess.Assert(a_oProductID.ExIsValid());
 
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_RESULT_CALLBACK, () => {
-			var oCallback = m_oCallbackDictA.GetValueOrDefault(EPurchaseCallback.PURCHASE, null);
+			var oCallback = m_oCallbackDictA[EPurchaseCallback.PURCHASE];
 
 			try {
 				// 완료 되었을 경우
@@ -369,7 +375,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CFunc.ShowLog($"CPurchaseManager.OnRestoreProducts: {a_bIsSuccess}", KCDefine.B_LOG_COLOR_PLUGIN);
 
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_RESTORE_CALLBACK, () => {
-			var oCallback = m_oCallbackDictB.GetValueOrDefault(EPurchaseCallback.RESTORE, null);
+			var oCallback = m_oCallbackDictB[EPurchaseCallback.RESTORE];
 			var oProductList = new List<Product>();
 
 			// 성공했을 경우
