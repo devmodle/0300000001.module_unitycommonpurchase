@@ -321,7 +321,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				}
 			}
 
-			m_oCallbackDict02.GetValueOrDefault(EPurchaseCallback.RESTORE)?.Invoke(this, oProductList, a_bIsSuccess);
+			m_oCallbackDict02.GetValueOrDefault(EPurchaseCallback.RESTORE)?.Invoke(this, oProductList, a_bIsSuccess && oProductList.ExIsValid());
 		});
 	}
 
