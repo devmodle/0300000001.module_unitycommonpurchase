@@ -129,9 +129,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	/** 결제에 실패했을 경우 */
 	public virtual void OnPurchaseFailed(Product a_oProduct, PurchaseFailureReason a_eReason) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_FAIL_CALLBACK, () => {
-			CFunc.ShowLogWarning($"CPurchaseManager.OnPurchaseFailed: {a_oProduct.definition.id}, {a_eReason}");
+		CFunc.ShowLogWarning($"CPurchaseManager.OnPurchaseFailed: {a_oProduct.definition.id}, {a_eReason}");
 
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_FAIL_CALLBACK, () => {
 			// 중복 결제 상품 일 경우
 			if(this.IsPurchaseNonConsumableProduct(a_oProduct) || a_eReason == PurchaseFailureReason.DuplicateTransaction) {
 				this.HandlePurchaseResult(a_oProduct.definition.id, true, true);
@@ -370,8 +370,8 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			}
 
 			// 콜백이 존재 할 경우
-			if(a_bIsInvoke && m_oCallbackDict01.TryGetValue(EPurchaseCallback.PURCHASE, out System.Action<CPurchaseManager, string, bool> oCallback)) {
-				CFunc.Invoke(ref oCallback, this, a_oProductID, a_bIsSuccess);
+			if(a_bIsInvoke) {
+				m_oCallbackDict01.GetValueOrDefault(EPurchaseCallback.PURCHASE)?.Invoke(this, a_oProductID, a_bIsSuccess);
 			}
 		});
 	}
