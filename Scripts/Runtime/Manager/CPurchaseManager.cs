@@ -320,7 +320,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 					this.RemovePurchaseProductID(m_oStoreController.products.all[i].definition.id);
 				}
 			}
-
+			
 			m_oCallbackDict02.GetValueOrDefault(EPurchaseCallback.RESTORE)?.Invoke(this, oProductList, a_bIsSuccess && oProductList.ExIsValid());
 		});
 	}
