@@ -284,12 +284,12 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			var oProduct = this.GetProduct(a_oID);
 			bool bIsEnableConfirm = m_bIsPurchasing && (oProduct != null && oProduct.availableToPurchase);
 			
-			// 확정 가능 할 경우
-			if(this.IsInit && bIsEnableConfirm) {
-				m_oStoreController.ConfirmPendingPurchase(oProduct);
-			}
-			
 			try {
+				// 확정 가능 할 경우
+				if(this.IsInit && bIsEnableConfirm) {
+					m_oStoreController.ConfirmPendingPurchase(oProduct);
+				}
+
 				this.HandlePurchaseResult(a_oID, this.IsInit && bIsEnableConfirm, false, true);
 			} finally {
 				CFunc.Invoke(ref a_oCallback, this, a_oID, this.IsInit && bIsEnableConfirm);
