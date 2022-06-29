@@ -51,6 +51,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	#region 변수
 	private STParams m_stParams;
 	private List<string> m_oPurchaseProductIDList = new List<string>();
+	
 	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>> m_oCallbackDict01 = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>>();
 	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>> m_oCallbackDict02 = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>>();
 
