@@ -49,7 +49,6 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 	#region 변수
-	private STParams m_stParams;
 	private List<string> m_oPurchaseProductIDList = new List<string>();
 	
 	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>> m_oCallbackDict01 = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>>();
@@ -66,6 +65,8 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	#endregion			// 변수
 
 	#region 프로퍼티
+	public STParams Params { get; private set; }
+
 	public bool IsInit {
 		get {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -87,7 +88,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			m_oStoreController = a_oController;
 			m_oExtensionProvider = a_oProvider;
 
-			m_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
+			this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
 		});
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
@@ -96,7 +97,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	public virtual void OnInitializeFailed(InitializationFailureReason a_eReason) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		CFunc.ShowLogWarning($"CPurchaseManager.OnInitializeFailed: {a_eReason}");
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => m_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, false));
+		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, false));
 #endif			// #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 
@@ -177,7 +178,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		if(this.IsInit) {
 			a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
 		} else {
-			m_stParams = a_stParams;
+			this.Params = a_stParams;
 			var oProductDefinitionList = new List<ProductDefinition>();
 
 			for(int i = 0; i < a_stParams.m_oProductInfoList.Count; ++i) {
