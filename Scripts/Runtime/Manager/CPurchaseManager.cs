@@ -43,7 +43,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 	/** 매개 변수 */
-	public partial struct STParams {
+	public struct STParams {
 		public List<STProductInfo> m_oProductInfoList;
 		public Dictionary<ECallback, System.Action<CPurchaseManager, bool>> m_oCallbackDict;
 	}
