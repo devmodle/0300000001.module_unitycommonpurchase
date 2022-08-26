@@ -349,9 +349,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	/** 결제 상품 식별자를 로드한다 */
 	private List<string> LoadPurchaseProductIDs() {
 #if MSG_PACK_ENABLE
-		return CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
+		return CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, true);
 #elif NEWTON_SOFT_JSON_MODULE_ENABLE
-		return CFunc.ReadJSONObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS);
+		return CFunc.ReadJSONObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, true);
 #else
 		return null;
 #endif			// #if MSG_PACK_ENABLE
@@ -360,9 +360,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	/** 결제 상품 식별자를 저장한다 */
 	private void SavePurchaseProductIDs(List<string> a_oPurchaseProductIDList) {
 #if MSG_PACK_ENABLE
-		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList);
+		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList, true);
 #elif NEWTON_SOFT_JSON_MODULE_ENABLE
-		CFunc.WriteJSONObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList);
+		CFunc.WriteJSONObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList, true);
 #endif			// #if MSG_PACK_ENABLE
 	}
 
