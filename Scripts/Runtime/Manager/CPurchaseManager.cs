@@ -348,16 +348,12 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	/** 결제 상품 식별자를 로드한다 */
 	private List<string> LoadPurchaseProductIDs() {
-#if MSG_PACK_ENABLE
 		return CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, true);
-#endif			// #if MSG_PACK_ENABLE
 	}
 
 	/** 결제 상품 식별자를 저장한다 */
 	private void SavePurchaseProductIDs(List<string> a_oPurchaseProductIDList) {
-#if MSG_PACK_ENABLE
 		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList, true);
-#endif			// #if MSG_PACK_ENABLE
 	}
 
 	/** 결제 결과를 처리한다 */
