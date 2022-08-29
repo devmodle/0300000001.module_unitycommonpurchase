@@ -1,18 +1,18 @@
 {
   "name": "module.unitycommonpurchase",
-  "version": "2.7.6",
+  "version": "2.7.7",
   "displayName": "Module.UnityCommonPurchase",
   "author": {
     "name": "dante",
     "email": "are2341@nate.com"
   },
   "dependencies": {
-	"module.unitycommondefine": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommondefine_client.git#2.7.6",
-    "module.unitycommonaccess": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonaccess_client.git#2.7.6",
-    "module.unitycommonfactory": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfactory_client.git#2.7.6",
-    "module.unitycommonextension": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonextension_client.git#2.7.6",
-	"module.unitycommonfunc": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunc_client.git#2.7.6",
-	"module.unitycommonutility": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonutility_client.git#2.7.6",
-    "module.unitycommonexternals": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonexternals_client.git#2.7.6"
+	"module.unitycommondefine": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommondefine_client.git#2.7.7",
+    "module.unitycommonaccess": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonaccess_client.git#2.7.7",
+    "module.unitycommonfactory": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfactory_client.git#2.7.7",
+    "module.unitycommonextension": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonextension_client.git#2.7.7",
+	"module.unitycommonfunc": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunc_client.git#2.7.7",
+	"module.unitycommonutility": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonutility_client.git#2.7.7",
+    "module.unitycommonexternals": "https://9tap:glpat-LxsZyPNZ5cNEPyxUPNaC@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonexternals_client.git#2.7.7"
   }
 }
