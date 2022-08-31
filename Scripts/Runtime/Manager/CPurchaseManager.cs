@@ -309,6 +309,15 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 	#endregion			// 함수
 
+	#region 클래스 함수
+	/** 매개 변수를 생성한다 */
+	public static STParams MakeParams(List<STProductInfo> a_oProductInfoList, Dictionary<ECallback, System.Action<CPurchaseManager, bool>> a_oCallbackDict) {
+		return new STParams() {
+			m_oProductInfoList = a_oProductInfoList, m_oCallbackDict = a_oCallbackDict
+		};
+	}
+	#endregion			// 클래스 함수
+
 	#region 조건부 함수
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	/** 상품이 복원 되었을 경우 */
