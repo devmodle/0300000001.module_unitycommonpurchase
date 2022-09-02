@@ -159,7 +159,6 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if (UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID))
 		// 결제 상품 식별자 파일이 존재 할 경우
 		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
-			m_oPurchaseProductIDList.Clear();
 			this.LoadPurchaseProductIDs().ExCopyTo(m_oPurchaseProductIDList, (a_oProductID) => a_oProductID);
 		}
 #endif			// #if (UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID))
