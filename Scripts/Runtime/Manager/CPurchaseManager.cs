@@ -310,9 +310,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	#region 클래스 함수
 	/** 매개 변수를 생성한다 */
-	public static STParams MakeParams(List<STProductInfo> a_oProductInfoList, Dictionary<ECallback, System.Action<CPurchaseManager, bool>> a_oCallbackDict) {
+	public static STParams MakeParams(List<STProductInfo> a_oProductInfoList, Dictionary<ECallback, System.Action<CPurchaseManager, bool>> a_oCallbackDict = null) {
 		return new STParams() {
-			m_oProductInfoList = a_oProductInfoList, m_oCallbackDict = a_oCallbackDict
+			m_oProductInfoList = a_oProductInfoList, m_oCallbackDict = a_oCallbackDict ?? new Dictionary<ECallback, System.Action<CPurchaseManager, bool>>()
 		};
 	}
 	#endregion			// 클래스 함수
