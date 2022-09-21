@@ -7,12 +7,12 @@
     "email": "are2341@nate.com"
   },
   "dependencies": {
-	"module.unitycommondefine": "https://9tap:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommondefine_client.git#2.8.0",
-    "module.unitycommonaccess": "https://9tap:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonaccess_client.git#2.8.0",
-    "module.unitycommonfactory": "https://9tap:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfactory_client.git#2.8.0",
-    "module.unitycommonextension": "https://9tap:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonextension_client.git#2.8.0",
-	"module.unitycommonfunc": "https://9tap:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunc_client.git#2.8.0",
-	"module.unitycommonutility": "https://9tap:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonutility_client.git#2.8.0",
-    "module.unitycommonexternals": "https://9tap:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonexternals_client.git#2.8.0"
+	"module.unitycommondefine": "https://studio%40ninetap.com:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommondefine_client.git#2.8.0",
+    "module.unitycommonaccess": "https://studio%40ninetap.com:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonaccess_client.git#2.8.0",
+    "module.unitycommonfactory": "https://studio%40ninetap.com:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfactory_client.git#2.8.0",
+    "module.unitycommonextension": "https://studio%40ninetap.com:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonextension_client.git#2.8.0",
+	"module.unitycommonfunc": "https://studio%40ninetap.com:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunc_client.git#2.8.0",
+	"module.unitycommonutility": "https://studio%40ninetap.com:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonutility_client.git#2.8.0",
+    "module.unitycommonexternals": "https://studio%40ninetap.com:REMOVED@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonexternals_client.git#2.8.0"
   }
 }
