@@ -1,18 +1,18 @@
 {
   "name": "module.unitycommonpurchase",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "displayName": "Module.UnityCommonPurchase",
   "author": {
     "name": "dante",
     "email": "are2341@nate.com"
   },
   "dependencies": {
-	"module.unitycommondefine": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommondefine_client.git#2.8.0",
-    "module.unitycommonaccess": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonaccess_client.git#2.8.0",
-    "module.unitycommonfactory": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfactory_client.git#2.8.0",
-    "module.unitycommonextension": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonextension_client.git#2.8.0",
-	"module.unitycommonfunc": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunc_client.git#2.8.0",
-	"module.unitycommonutility": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonutility_client.git#2.8.0",
-    "module.unitycommonexternals": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonexternals_client.git#2.8.0"
+	"module.unitycommondefine": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommondefine_client.git#2.8.1",
+    "module.unitycommonaccess": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonaccess_client.git#2.8.1",
+    "module.unitycommonfactory": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfactory_client.git#2.8.1",
+    "module.unitycommonextension": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonextension_client.git#2.8.1",
+	"module.unitycommonfunc": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunc_client.git#2.8.1",
+	"module.unitycommonutility": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonutility_client.git#2.8.1",
+    "module.unitycommonexternals": "https://studio%40ninetap.com:glpat-MVgJsJw488eXxUf3xMsa@gitlab.com/9tapmodule.repository/0300000001.module_unitycommonexternals_client.git#2.8.1"
   }
 }
