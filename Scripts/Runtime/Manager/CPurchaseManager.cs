@@ -84,6 +84,11 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			m_oStoreController = a_oController;
 			m_oExtensionProvider = a_oProvider;
 
+#if UNITY_EDITOR && (DEBUG || DEVELOPMENT_BUILD)
+			StandardPurchasingModule.Instance().useFakeStoreAlways = true;
+			StandardPurchasingModule.Instance().useFakeStoreUIMode = FakeStoreUIMode.Default;
+#endif			// #if UNITY_EDITOR && (DEBUG || DEVELOPMENT_BUILD)
+
 			this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
 		});
 #endif         // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)                                                             
