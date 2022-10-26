@@ -1,11 +1,11 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
 #if PURCHASE_MODULE_ENABLE
+using System.IO;
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
 
@@ -48,7 +48,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		public Dictionary<ECallback, System.Action<CPurchaseManager, bool>> m_oCallbackDict;
 	}
 
-#region 변수
+	#region 변수
 	private List<string> m_oPurchaseProductIDList = new List<string>();
 	private Dictionary<EKey, bool> m_oBoolDict = new Dictionary<EKey, bool>();
 	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>> m_oCallbackDict01 = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>>();
@@ -58,9 +58,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	private IStoreController m_oStoreController = null;
 	private IExtensionProvider m_oExtensionProvider = null;
 #endif         // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)                                                             
-#endregion         // 변수               
+	#endregion         // 변수               
 
-#region 프로퍼티
+	#region 프로퍼티
 	public STParams Params { get; private set; }
 
 	public bool IsInit {
@@ -72,9 +72,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #endif         // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)                                                             
 		}
 	}
-#endregion         // 프로퍼티                 
+	#endregion         // 프로퍼티                 
 
-#region IStoreListener
+	#region IStoreListener
 	/** 초기화 되었을 경우 */
 	public virtual void OnInitialized(IStoreController a_oController, IExtensionProvider a_oProvider) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -87,7 +87,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if UNITY_EDITOR && (DEBUG || DEVELOPMENT_BUILD)
 			StandardPurchasingModule.Instance().useFakeStoreAlways = true;
 			StandardPurchasingModule.Instance().useFakeStoreUIMode = FakeStoreUIMode.Default;
-#endif			// #if UNITY_EDITOR && (DEBUG || DEVELOPMENT_BUILD)
+#endif         // #if UNITY_EDITOR && (DEBUG || DEVELOPMENT_BUILD)                                                             
 
 			this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
 		});
@@ -154,9 +154,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		});
 #endif         // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)                                                             
 	}
-#endregion         // IStoreListener                           
+	#endregion         // IStoreListener                           
 
-#region 함수
+	#region 함수
 	/** 초기화 */
 	public override void Awake() {
 		base.Awake();
@@ -186,7 +186,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				CAccess.Assert(a_stParams.m_oProductInfoList[i].m_oID.ExIsValid() && a_stParams.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
 				oProductDefinitionList.ExAddVal(new ProductDefinition(a_stParams.m_oProductInfoList[i].m_oID, a_stParams.m_oProductInfoList[i].m_eProductType));
 			}
-			
+
 			var oBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
 			oBuilder.AddProducts(oProductDefinitionList);
 
@@ -257,7 +257,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CFunc.Invoke(ref a_oCallback, this, a_oID, false);
 #endif         // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)                                                             
 	}
-	
+
 	/** 상품을 복원한다 */
 	public void RestoreProducts(System.Action<CPurchaseManager, List<Product>, bool> a_oCallback) {
 		CFunc.ShowLog("CPurchaseManager.RestoreProducts", KCDefine.B_LOG_COLOR_PLUGIN);
@@ -295,7 +295,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 			var oProduct = this.GetProduct(a_oID);
 			bool bIsEnableConfirm = m_oBoolDict.GetValueOrDefault(EKey.IS_PURCHASING) && (oProduct != null && oProduct.availableToPurchase);
-			
+
 			try {
 				// 확정 가능 할 경우
 				if(this.IsInit && bIsEnableConfirm) {
@@ -311,18 +311,18 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #endif         // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)                                                             
 		});
 	}
-#endregion         // 함수               
+	#endregion         // 함수               
 
-#region 클래스 함수
+	#region 클래스 함수
 	/** 매개 변수를 생성한다 */
 	public static STParams MakeParams(List<STProductInfo> a_oProductInfoList, Dictionary<ECallback, System.Action<CPurchaseManager, bool>> a_oCallbackDict = null) {
 		return new STParams() {
 			m_oProductInfoList = a_oProductInfoList, m_oCallbackDict = a_oCallbackDict ?? new Dictionary<ECallback, System.Action<CPurchaseManager, bool>>()
 		};
 	}
-#endregion         // 클래스 함수                   
+	#endregion         // 클래스 함수                   
 
-#region 조건부 함수
+	#region 조건부 함수
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	/** 상품이 복원 되었을 경우 */
 	private void OnRestoreProducts(bool a_bIsSuccess) {
@@ -342,7 +342,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 					this.RemovePurchaseProductID(m_oStoreController.products.all[i].definition.id);
 				}
 			}
-			
+
 			m_oCallbackDict02.GetValueOrDefault(EPurchaseCallback.RESTORE)?.Invoke(this, oProductList, a_bIsSuccess && oProductList.ExIsValid());
 		});
 	}
@@ -388,9 +388,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		});
 	}
 #endif         // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)                                                             
-#endregion         // 조건부 함수                   
+	#endregion         // 조건부 함수                   
 
-#region 조건부 클래스 함수
+	#region 조건부 클래스 함수
 #if UNITY_EDITOR
 	/** 초기화 */
 	[InitializeOnLoadMethod]
@@ -404,6 +404,6 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #endif         // #if UNITY_ANDROID                              
 	}
 #endif         // #if UNITY_EDITOR                             
-#endregion         // 조건부 클래스 함수                       
+	#endregion         // 조건부 클래스 함수                       
 }
 #endif         // #if PURCHASE_MODULE_ENABLE                                       
