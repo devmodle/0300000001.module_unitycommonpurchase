@@ -14,7 +14,7 @@ using UnityEditor;
 using UnityEditor.Purchasing;
 #endif         // #if UNITY_EDITOR                             
 
-#if(UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
+#if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
 using UnityEngine.Purchasing.Security;
 #endif         // #if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE                                                                     
 
@@ -161,7 +161,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	public override void Awake() {
 		base.Awake();
 
-#if(UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID))
+#if (UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID))
 		// 결제 상품 식별자 파일이 존재 할 경우
 		if(File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
 			this.LoadPurchaseProductIDs().ExCopyTo(m_oPurchaseProductIDList, (a_oProductID) => a_oProductID);
