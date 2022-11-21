@@ -1,18 +1,18 @@
 {
   "name": "module.unitycommonpurchase",
-  "version": "2.8.2",
+  "version": "2.8.3",
   "displayName": "Module.UnityCommonPurchase",
   "author": {
     "name": "dante",
     "email": "are2341@nate.com"
   },
   "dependencies": {
-	"module.unitycommondefine": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommondefine_client.git#2.8.2",
-    "module.unitycommonaccess": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonaccess_client.git#2.8.2",
-    "module.unitycommonfactory": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfactory_client.git#2.8.2",
-    "module.unitycommonextension": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonextension_client.git#2.8.2",
-	"module.unitycommonfunc": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunc_client.git#2.8.2",
-	"module.unitycommonutility": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonutility_client.git#2.8.2",
-    "module.unitycommonexternals": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonexternals_client.git#2.8.2"
+	"module.unitycommondefine": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommondefine_client.git#2.8.3",
+    "module.unitycommonaccess": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonaccess_client.git#2.8.3",
+    "module.unitycommonfactory": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfactory_client.git#2.8.3",
+    "module.unitycommonextension": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonextension_client.git#2.8.3",
+	"module.unitycommonfunc": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunc_client.git#2.8.3",
+	"module.unitycommonutility": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonutility_client.git#2.8.3",
+    "module.unitycommonexternals": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonexternals_client.git#2.8.3"
   }
 }
