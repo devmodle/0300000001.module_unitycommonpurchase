@@ -49,8 +49,11 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 	#region 변수
+	private Dictionary<EKey, bool> m_oBoolDict = new Dictionary<EKey, bool>() {
+		[EKey.IS_PURCHASING] = false
+	};
+
 	private List<string> m_oPurchaseProductIDList = new List<string>();
-	private Dictionary<EKey, bool> m_oBoolDict = new Dictionary<EKey, bool>();
 	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>> m_oCallbackDict01 = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, string, bool>>();
 	private Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>> m_oCallbackDict02 = new Dictionary<EPurchaseCallback, System.Action<CPurchaseManager, List<Product>, bool>>();
 
@@ -110,7 +113,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 		try {
 			// 결제 중 일 경우
-			if(m_oBoolDict.GetValueOrDefault(EKey.IS_PURCHASING)) {
+			if(m_oBoolDict[EKey.IS_PURCHASING]) {
 				this.AddPurchaseProductID(oID);
 			}
 
@@ -125,10 +128,10 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				this.HandlePurchaseResult(oID, false, true, true);
 			}
 
-			return (m_oBoolDict.GetValueOrDefault(EKey.IS_PURCHASING) && oPurchaseReceipts.ExIsValid()) ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
+			return (m_oBoolDict[EKey.IS_PURCHASING] && oPurchaseReceipts.ExIsValid()) ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
 #else
 			this.HandlePurchaseResult(oID, true, true);
-			return m_oBoolDict.GetValueOrDefault(EKey.IS_PURCHASING) ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
+			return m_oBoolDict[EKey.IS_PURCHASING] ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
 #endif // #if !UNITY_EDITOR && ((UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE)
 		} catch(System.Exception oException) {
 			CFunc.ShowLogWarning($"CPurchaseManager.ProcessPurchase Exception: {oException.Message}");
@@ -204,11 +207,11 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		var oProduct = this.GetProduct(a_oID);
-		bool bIsEnablePurchase = !m_oBoolDict.GetValueOrDefault(EKey.IS_PURCHASING) && (oProduct != null && oProduct.availableToPurchase);
+		bool bIsEnablePurchase = !m_oBoolDict[EKey.IS_PURCHASING] && (oProduct != null && oProduct.availableToPurchase);
 
 		// 결제 가능 할 경우
 		if(this.IsInit && bIsEnablePurchase) {
-			m_oBoolDict.ExReplaceVal(EKey.IS_PURCHASING, true);
+			m_oBoolDict[EKey.IS_PURCHASING] = true;
 			m_oCallbackDict01.ExReplaceVal(EPurchaseCallback.PURCHASE, a_oCallback);
 
 			// 결제 된 상품 일 경우
@@ -231,7 +234,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		// 초기화 되었을 경우
-		if(this.IsInit && !m_oBoolDict.GetValueOrDefault(EKey.IS_PURCHASING)) {
+		if(this.IsInit && !m_oBoolDict[EKey.IS_PURCHASING]) {
 			m_oCallbackDict02.ExReplaceVal(EPurchaseCallback.RESTORE, a_oCallback);
 
 #if UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)
@@ -261,7 +264,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_CONFIRM_CALLBACK, () => {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 			var oProduct = this.GetProduct(a_oID);
-			bool bIsEnableConfirm = m_oBoolDict.GetValueOrDefault(EKey.IS_PURCHASING) && (oProduct != null && oProduct.availableToPurchase);
+			bool bIsEnableConfirm = m_oBoolDict[EKey.IS_PURCHASING] && (oProduct != null && oProduct.availableToPurchase);
 
 			try {
 				// 확정 가능 할 경우
@@ -345,8 +348,8 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_HANDLE_PURCHASE_RESULT_CALLBACK, () => {
 			// 완료 되었을 경우
 			if(a_bIsComplete) {
+				m_oBoolDict[EKey.IS_PURCHASING] = false;
 				this.RemovePurchaseProductID(a_oProductID);
-				m_oBoolDict.ExReplaceVal(EKey.IS_PURCHASING, false);
 			}
 
 			// 콜백이 존재 할 경우
