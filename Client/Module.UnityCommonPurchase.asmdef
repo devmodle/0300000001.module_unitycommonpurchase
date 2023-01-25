@@ -2,7 +2,7 @@
     "name": "Module.UnityCommonPurchase",
     "rootNamespace": "",
     "references": [
-        "Module.UnityUnityPurchasing",
+        "UnityEditor.Purchasing",
         "Module.UnityCommonDefine",
         "Module.UnityCommonAccess",
         "Module.UnityCommonFactory",
@@ -10,14 +10,14 @@
         "Module.UnityCommonFunc",
         "Module.UnityCommonUtility",
         "Module.UnityCommonExternals",
-        "MessagePack",
-        "MessagePack.Annotations",
-        "UnityEditor.Purchasing",
+        "Module.UnityUnityPurchasing",
         "UnityEngine.Purchasing",
         "UnityEngine.Purchasing.Stores",
         "UnityEngine.Purchasing.Security",
         "UnityEngine.Purchasing.SecurityCore",
-        "UnityEngine.Purchasing.SecurityStub"
+        "UnityEngine.Purchasing.SecurityStub",
+        "MessagePack",
+        "MessagePack.Annotations"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
