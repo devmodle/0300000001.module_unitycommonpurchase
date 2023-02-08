@@ -6,8 +6,11 @@ using UnityEngine.Events;
 
 #if PURCHASE_MODULE_ENABLE
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine.Purchasing;
 using UnityEngine.Purchasing.Extension;
+using Unity.Services.Core;
+using Unity.Services.Core.Environments;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -183,17 +186,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
 		} else {
 			this.Params = a_stParams;
-			var oProductDefinitionList = new List<ProductDefinition>();
+			var oOpts = new InitializationOptions().SetEnvironmentName(KCDefine.U_ENVIRONMENT_N_PRODUCTION);
 
-			for(int i = 0; i < a_stParams.m_oProductInfoList.Count; ++i) {
-				CAccess.Assert(a_stParams.m_oProductInfoList[i].m_oID.ExIsValid() && a_stParams.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
-				oProductDefinitionList.ExAddVal(new ProductDefinition(a_stParams.m_oProductInfoList[i].m_oID, a_stParams.m_oProductInfoList[i].m_eProductType));
-			}
-
-			var oBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance());
-			oBuilder.AddProducts(oProductDefinitionList);
-
-			UnityPurchasing.Initialize(this, oBuilder);
+			CTaskManager.Inst.WaitAsyncTask(UnityServices.InitializeAsync(oOpts), this.OnInit);
 		}
 #else
 		a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, false);
@@ -295,6 +290,24 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	#region 조건부 함수
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
+	/** 초기화 되었을 경우 */
+	private void OnInit(Task a_oTask) {
+		CFunc.ShowLog($"CPurchaseManager.OnInit: {a_oTask.ExIsCompleteSuccess()}", KCDefine.B_LOG_COLOR_PLUGIN);
+
+		// 초기화 되었을 경우
+		if(a_oTask.ExIsCompleteSuccess()) {
+			var oProductDefinitionList = new List<ProductDefinition>();
+			
+			for(int i = 0; i < this.Params.m_oProductInfoList.Count; ++i) {
+				CAccess.Assert(this.Params.m_oProductInfoList[i].m_oID.ExIsValid() && this.Params.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
+				oProductDefinitionList.ExAddVal(new ProductDefinition(this.Params.m_oProductInfoList[i].m_oID, this.Params.m_oProductInfoList[i].m_eProductType));
+			}
+
+			var oBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance()).AddProducts(oProductDefinitionList);
+			UnityPurchasing.Initialize(this, oBuilder);
+		}
+	}
+
 	/** 상품이 복원 되었을 경우 */
 	private void OnRestoreProducts(bool a_bIsSuccess) {
 		CFunc.ShowLog($"CPurchaseManager.OnRestoreProducts: {a_bIsSuccess}", KCDefine.B_LOG_COLOR_PLUGIN);
@@ -302,7 +315,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_RESTORE_CALLBACK, () => {
 			var oProductList = new List<Product>();
 
-			// 성공했을 경우
+			// 복원 되었을 경우
 			if(a_bIsSuccess) {
 				for(int i = 0; i < m_oStoreController.products.all.Length; ++i) {
 					// 결제 된 비소모 상품 일 경우

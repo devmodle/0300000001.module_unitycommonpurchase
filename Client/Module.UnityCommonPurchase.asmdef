@@ -11,6 +11,8 @@
         "Module.UnityCommonUtility",
         "Module.UnityCommonExternals",
         "Module.UnityUnityPurchasing",
+        "Unity.Services.Core",
+        "Unity.Services.Core.Environments",
         "UnityEngine.Purchasing",
         "UnityEngine.Purchasing.Stores",
         "UnityEngine.Purchasing.Security",
