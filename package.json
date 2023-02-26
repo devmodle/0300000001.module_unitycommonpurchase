@@ -11,7 +11,7 @@
     "module.unitycommonaccess": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonaccess.git#3.0.3",
     "module.unitycommonfactory": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfactory.git#3.0.3",
     "module.unitycommonextension": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonextension.git#3.0.3",
-	"module.unitycommonfunc": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunc.git#3.0.3",
+	"module.unitycommonfunction": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonfunction.git#3.0.3",
 	"module.unitycommonutility": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonutility.git#3.0.3",
     "module.unitycommonexternals": "https://gitlab.com/9tapmodule.repository/0300000001.module_unitycommonexternals.git#3.0.3"
   }
