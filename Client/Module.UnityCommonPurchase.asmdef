@@ -7,7 +7,7 @@
         "Module.UnityCommonAccess",
         "Module.UnityCommonFactory",
         "Module.UnityCommonExtension",
-        "Module.UnityCommonFunc",
+        "Module.UnityCommonFunction",
         "Module.UnityCommonUtility",
         "Module.UnityCommonExternals",
         "Module.UnityUnityPurchasing",
