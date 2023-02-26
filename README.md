@@ -1,3 +1,3 @@
 # 0300000001.Module_UnityCommonPurchase
 
-Module - UnityCommonPurchase 클라이언트 프로젝트
+Module - UnityCommonPurchase 프로젝트
