@@ -12,14 +12,14 @@ using UnityEngine.Purchasing.Extension;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 
-#if(UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
-using UnityEngine.Purchasing.Security;
-#endif // #if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
-
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Purchasing;
 #endif // #if UNITY_EDITOR
+
+#if(UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
+using UnityEngine.Purchasing.Security;
+#endif // #if (UNITY_IOS || UNITY_ANDROID) && RECEIPT_CHECK_ENABLE
 
 /** 인앱 결제 관리자 */
 public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
