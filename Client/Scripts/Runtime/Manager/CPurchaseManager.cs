@@ -102,10 +102,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	/** 초기화에 실패했을 경우 */
 	public virtual void OnInitializeFailed(InitializationFailureReason a_eReason) {
-#if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		CFunc.ShowLogWarning($"CPurchaseManager.OnInitializeFailed: {a_eReason}");
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, false));
-#endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
+		this.OnInitializeFailed(a_eReason, string.Empty);
 	}
 
 	/** 초기화에 실패했을 경우 */
