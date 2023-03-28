@@ -283,16 +283,6 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 	#endregion // 함수
 
-	#region 클래스 함수
-	/** 매개 변수를 생성한다 */
-	public static STParams MakeParams(List<STProductInfo> a_oProductInfoList, Dictionary<ECallback, System.Action<CPurchaseManager, bool>> a_oCallbackDict = null) {
-		return new STParams() {
-			m_oProductInfoList = a_oProductInfoList,
-			m_oCallbackDict = a_oCallbackDict ?? new Dictionary<ECallback, System.Action<CPurchaseManager, bool>>()
-		};
-	}
-	#endregion // 클래스 함수
-
 	#region 조건부 함수
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	/** 초기화 되었을 경우 */
@@ -432,5 +422,18 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
 	#endregion // 함수
+}
+
+/** 인앱 결제 관리자 - 팩토리 */
+public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener {
+	#region 클래스 함수
+	/** 매개 변수를 생성한다 */
+	public static STParams MakeParams(List<STProductInfo> a_oProductInfoList, Dictionary<ECallback, System.Action<CPurchaseManager, bool>> a_oCallbackDict = null) {
+		return new STParams() {
+			m_oProductInfoList = a_oProductInfoList,
+			m_oCallbackDict = a_oCallbackDict ?? new Dictionary<ECallback, System.Action<CPurchaseManager, bool>>()
+		};
+	}
+	#endregion // 클래스 함수
 }
 #endif // #if PURCHASE_MODULE_ENABLE
