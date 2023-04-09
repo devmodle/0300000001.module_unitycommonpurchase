@@ -26,6 +26,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	/** 식별자 */
 	private enum EKey {
 		NONE = -1,
+		IS_INIT,
 		IS_PURCHASING,
 		[HideInInspector] MAX_VAL
 	}
@@ -53,6 +54,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	#region 변수
 	private Dictionary<EKey, bool> m_oBoolDict = new Dictionary<EKey, bool>() {
+		[EKey.IS_INIT] = false,
 		[EKey.IS_PURCHASING] = false
 	};
 
@@ -68,16 +70,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	#region 프로퍼티
 	public STParams Params { get; private set; }
-
-	public bool IsInit {
-		get {
-#if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-			return m_oStoreController != null && m_oExtensionProvider != null;
-#else
-			return false;
-#endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		}
-	}
+	public bool IsInit => m_oBoolDict[EKey.IS_INIT];
 	#endregion // 프로퍼티
 
 	#region IStoreListener
@@ -95,7 +88,8 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			StandardPurchasingModule.Instance().useFakeStoreUIMode = FakeStoreUIMode.Default;
 #endif // #if UNITY_EDITOR && (DEBUG || DEVELOPMENT_BUILD)
 
-			this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
+			m_oBoolDict[EKey.IS_INIT] = true;
+			this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, m_oBoolDict[EKey.IS_INIT]);
 		});
 #endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 	}
@@ -131,19 +125,19 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 			// 결제 영수증이 유효 할 경우
 			if(oPurchaseReceipts.ExIsValid()) {
-				this.HandlePurchaseResult(oID, true, true);
+				this.HandlePurchaseResult(oID, true);
 			} else {
-				this.HandlePurchaseResult(oID, false, true, true);
+				this.HandlePurchaseResult(oID, false, a_bIsComplete: true);
 			}
 
 			return (m_oBoolDict[EKey.IS_PURCHASING] && oPurchaseReceipts.ExIsValid()) ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
 #else
-			this.HandlePurchaseResult(oID, true, true);
+			this.HandlePurchaseResult(oID, true);
 			return m_oBoolDict[EKey.IS_PURCHASING] ? PurchaseProcessingResult.Pending : PurchaseProcessingResult.Complete;
 #endif // #if !UNITY_EDITOR && ((UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)) && RECEIPT_CHECK_ENABLE)
 		} catch(System.Exception oException) {
 			CFunc.ShowLogWarning($"CPurchaseManager.ProcessPurchase Exception: {oException.Message}");
-			this.HandlePurchaseResult(oID, false, true, true);
+			this.HandlePurchaseResult(oID, false, a_bIsComplete: true);
 		}
 #endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 
@@ -158,9 +152,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_FAIL_CALLBACK, () => {
 			// 중복 결제 상품 일 경우
 			if(this.IsPurchaseNonConsumableProduct(a_oProduct) || a_eReason == PurchaseFailureReason.DuplicateTransaction) {
-				this.HandlePurchaseResult(a_oProduct.definition.id, true, true);
+				this.HandlePurchaseResult(a_oProduct.definition.id, true);
 			} else {
-				this.HandlePurchaseResult(a_oProduct.definition.id, false, true, true);
+				this.HandlePurchaseResult(a_oProduct.definition.id, false, a_bIsComplete: true);
 			}
 		});
 #endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -187,8 +181,8 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		// 초기화 되었을 경우
-		if(this.IsInit) {
-			a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
+		if(m_oBoolDict[EKey.IS_INIT]) {
+			a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, m_oBoolDict[EKey.IS_INIT]);
 		} else {
 			this.Params = a_stParams;
 			var oOpts = new InitializationOptions().SetEnvironmentName(KCDefine.U_ENVIRONMENT_N_PRODUCTION);
@@ -210,13 +204,13 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		bool bIsEnablePurchase = !m_oBoolDict[EKey.IS_PURCHASING] && (oProduct != null && oProduct.availableToPurchase);
 
 		// 결제 가능 할 경우
-		if(this.IsInit && bIsEnablePurchase) {
+		if(m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase) {
 			m_oBoolDict[EKey.IS_PURCHASING] = true;
 			m_oCallbackDict01.ExReplaceVal(EPurchaseCallback.PURCHASE, a_oCallback);
 
 			// 결제 된 상품 일 경우
 			if(m_oPurchaseProductIDList.Contains(a_oID) || this.IsPurchaseNonConsumableProduct(oProduct)) {
-				this.HandlePurchaseResult(a_oID, true, true);
+				this.HandlePurchaseResult(a_oID, true);
 			} else {
 				m_oStoreController.InitiatePurchase(oProduct, KCDefine.U_PAYLOAD_PURCHASE_M_PURCHASE);
 			}
@@ -234,7 +228,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		// 초기화 되었을 경우
-		if(this.IsInit && !m_oBoolDict[EKey.IS_PURCHASING]) {
+		if(m_oBoolDict[EKey.IS_INIT] && !m_oBoolDict[EKey.IS_PURCHASING]) {
 			m_oCallbackDict02.ExReplaceVal(EPurchaseCallback.RESTORE, a_oCallback);
 
 #if UNITY_IOS || (UNITY_ANDROID && ANDROID_GOOGLE_PLATFORM)
@@ -264,17 +258,17 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_CONFIRM_CALLBACK, () => {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 			var oProduct = this.GetProduct(a_oID);
-			bool bIsEnableConfirm = m_oBoolDict[EKey.IS_PURCHASING] && (oProduct != null && oProduct.availableToPurchase);
+			bool bIsEnablePurchase = m_oBoolDict[EKey.IS_PURCHASING] && (oProduct != null && oProduct.availableToPurchase);
 
 			try {
-				// 확정 가능 할 경우
-				if(this.IsInit && bIsEnableConfirm) {
+				// 결제 가능 할 경우
+				if(m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase) {
 					m_oStoreController.ConfirmPendingPurchase(oProduct);
 				}
 
-				this.HandlePurchaseResult(a_oID, this.IsInit && bIsEnableConfirm, false, true);
+				this.HandlePurchaseResult(a_oID, m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase, false, true);
 			} finally {
-				CFunc.Invoke(ref a_oCallback, this, a_oID, this.IsInit && bIsEnableConfirm);
+				CFunc.Invoke(ref a_oCallback, this, a_oID, m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase);
 			}
 #else
 			CFunc.Invoke(ref a_oCallback, this, a_oID, false);
@@ -360,7 +354,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 				this.RemovePurchaseProductID(a_oProductID);
 			}
 
-			// 콜백이 존재 할 경우
+			// 콜백 호출이 가능 할 경우
 			if(a_bIsInvoke) {
 				m_oCallbackDict01.GetValueOrDefault(EPurchaseCallback.PURCHASE)?.Invoke(this, a_oProductID, a_bIsSuccess);
 			}
@@ -394,7 +388,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CAccess.Assert(a_oID.ExIsValid());
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		return this.IsInit ? this.IsPurchaseNonConsumableProduct(this.GetProduct(a_oID)) : false;
+		return m_oBoolDict[EKey.IS_INIT] ? this.IsPurchaseNonConsumableProduct(this.GetProduct(a_oID)) : false;
 #else
 		return false;
 #endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -405,7 +399,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CAccess.Assert(a_oProduct != null);
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		return this.IsInit && (a_oProduct.hasReceipt && a_oProduct.definition.type == ProductType.NonConsumable);
+		return m_oBoolDict[EKey.IS_INIT] && (a_oProduct.hasReceipt && a_oProduct.definition.type == ProductType.NonConsumable);
 #else
 		return false;
 #endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -416,7 +410,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CAccess.Assert(a_oID.ExIsValid());
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		return this.IsInit ? m_oStoreController.products.WithID(a_oID) : null;
+		return m_oBoolDict[EKey.IS_INIT] ? m_oStoreController.products.WithID(a_oID) : null;
 #else
 		return null;
 #endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
