@@ -260,16 +260,13 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			var oProduct = this.GetProduct(a_oID);
 			bool bIsEnablePurchase = m_oBoolDict[EKey.IS_PURCHASING] && (oProduct != null && oProduct.availableToPurchase);
 
-			try {
-				// 결제 가능 할 경우
-				if(m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase) {
-					m_oStoreController.ConfirmPendingPurchase(oProduct);
-				}
-
-				this.HandlePurchaseResult(a_oID, m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase, false, true);
-			} finally {
-				CFunc.Invoke(ref a_oCallback, this, a_oID, m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase);
+			// 결제 가능 할 경우
+			if(m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase) {
+				m_oStoreController.ConfirmPendingPurchase(oProduct);
 			}
+
+			this.HandlePurchaseResult(a_oID, m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase, false, true);
+			CFunc.Invoke(ref a_oCallback, this, a_oID, m_oBoolDict[EKey.IS_INIT] && bIsEnablePurchase);
 #else
 			CFunc.Invoke(ref a_oCallback, this, a_oID, false);
 #endif // #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
@@ -288,12 +285,14 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			var oProductDefinitionList = new List<ProductDefinition>();
 			
 			for(int i = 0; i < this.Params.m_oProductInfoList.Count; ++i) {
+				CFunc.ShowLog($"CPurchaseManager.OnInit: {this.Params.m_oProductInfoList[i].m_oID}, {this.Params.m_oProductInfoList[i].m_eProductType}");
 				CAccess.Assert(this.Params.m_oProductInfoList[i].m_oID.ExIsValid() && this.Params.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
+
 				oProductDefinitionList.ExAddVal(new ProductDefinition(this.Params.m_oProductInfoList[i].m_oID, this.Params.m_oProductInfoList[i].m_eProductType));
 			}
 
-			var oBuilder = ConfigurationBuilder.Instance(StandardPurchasingModule.Instance()).AddProducts(oProductDefinitionList);
-			UnityPurchasing.Initialize(this, oBuilder);
+			var oModule = StandardPurchasingModule.Instance();
+			UnityPurchasing.Initialize(this, ConfigurationBuilder.Instance(oModule).AddProducts(oProductDefinitionList));
 		}
 	}
 
