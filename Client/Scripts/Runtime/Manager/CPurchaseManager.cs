@@ -185,9 +185,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, m_oBoolDict[EKey.IS_INIT]);
 		} else {
 			this.Params = a_stParams;
-			var oOpts = new InitializationOptions().SetEnvironmentName(KCDefine.U_ENVIRONMENT_N_PRODUCTION);
-
-			CTaskManager.Inst.WaitAsyncTask(UnityServices.InitializeAsync(oOpts), this.OnInit);
+			CTaskManager.Inst.WaitAsyncTask(UnityServices.InitializeAsync(new InitializationOptions().SetEnvironmentName(KCDefine.U_ENVIRONMENT_N_PRODUCTION)), this.OnInit);
 		}
 #else
 		a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, false);
