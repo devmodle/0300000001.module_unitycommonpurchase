@@ -45,7 +45,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 	#region 변수
-	[Header("=====> 속성 <=====")]
+	[Header("=====> Fields <=====")]
 	private bool m_bIsPurchasing = false;
 	private List<string> m_oPurchaseProductIDList = new List<string>();
 
