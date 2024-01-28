@@ -63,7 +63,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	#endregion // 프로퍼티
 
 	#region IStoreListener
-	/** 초기화 되었을 경우 */
+	/** 초기화되었을 경우 */
 	public virtual void OnInitialized(IStoreController a_oController, IExtensionProvider a_oProvider) {
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
 		CFunc.ShowLog("CPurchaseManager.OnInitialized", KCDefine.B_LOG_COLOR_PLUGIN);
@@ -176,7 +176,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CAccess.Assert(a_stParams.m_oProductInfoList != null);
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		// 초기화 되었을 경우
+		// 초기화되었을 경우
 		if(this.IsInit) {
 			a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
 		} else {
@@ -203,7 +203,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CFunc.ShowLog("CPurchaseManager.RestoreProducts", KCDefine.B_LOG_COLOR_PLUGIN);
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-		// 초기화 되었을 경우
+		// 초기화되었을 경우
 		if(this.IsInit && !m_bIsPurchasing) {
 			m_oCallbackDictB.ExReplaceVal(EPurchaseCallback.RESTORE, a_oCallback);
 
@@ -278,11 +278,11 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 #if UNITY_EDITOR || (UNITY_IOS || UNITY_ANDROID)
-	/** 초기화 되었을 경우 */
+	/** 초기화되었을 경우 */
 	private void OnInit(Task a_oTask) {
 		CFunc.ShowLog($"CPurchaseManager.OnInit: {a_oTask.ExIsCompleteSuccess()}", KCDefine.B_LOG_COLOR_PLUGIN);
 
-		// 초기화 되었을 경우
+		// 초기화되었을 경우
 		if(a_oTask.ExIsCompleteSuccess()) {
 			var oProductDefinitionList = new List<ProductDefinition>();
 			
@@ -301,14 +301,14 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		}
 	}
 
-	/** 상품이 복원 되었을 경우 */
+	/** 상품이 복원되었을 경우 */
 	private void OnRestoreProducts(bool a_bIsSuccess) {
 		CFunc.ShowLog($"CPurchaseManager.OnRestoreProducts: {a_bIsSuccess}", KCDefine.B_LOG_COLOR_PLUGIN);
 
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_RESTORE_CALLBACK, () => {
 			var oProductList = new List<Product>();
 
-			// 복원 되었을 경우
+			// 복원되었을 경우
 			if(a_bIsSuccess) {
 				for(int i = 0; i < m_oStoreController.products.all.Length; ++i) {
 					// 결제 된 비소모 상품 일 경우
@@ -355,7 +355,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CAccess.Assert(a_oProductID.ExIsValid());
 
 		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_HANDLE_PURCHASE_RESULT_CALLBACK, () => {
-			// 완료 되었을 경우
+			// 완료되었을 경우
 			if(a_bIsComplete) {
 				m_bIsPurchasing = false;
 				this.RemovePurchaseProductID(a_oProductID);
