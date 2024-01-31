@@ -12,14 +12,14 @@ using UnityEngine.Purchasing.Extension;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 
+#if RECEIPT_CHECK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
+using UnityEngine.Purchasing.Security;
+#endif // #if RECEIPT_CHECK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
+
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Purchasing;
 #endif // #if UNITY_EDITOR
-
-#if RECEIPT_CHECK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
-using UnityEngine.Purchasing.Security;
-#endif // #if RECEIPT_CHECK_ENABLE && (UNITY_IOS || UNITY_ANDROID)
 
 /** 인앱 결제 관리자 */
 public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener, IDetailedStoreListener {
@@ -151,10 +151,10 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 			bool bIsPurchaseNonConsumableProductA = this.IsPurchaseNonConsumableProduct(a_oProduct);
 			bool bIsPurchaseNonConsumableProductB = a_oDesc.reason == PurchaseFailureReason.DuplicateTransaction;
 
-			bool bIsPurchaseNonConsumableProduct = bIsPurchaseNonConsumableProductA || bIsPurchaseNonConsumableProductB;
+			bool bIsFinalPurchaseNonConsumableProduct = bIsPurchaseNonConsumableProductA || bIsPurchaseNonConsumableProductB;
 
 			this.HandlePurchaseResult(a_oProduct.definition.id, 
-				bIsPurchaseNonConsumableProduct, a_bIsComplete: !bIsPurchaseNonConsumableProduct);
+				bIsFinalPurchaseNonConsumableProduct, a_bIsComplete: !bIsFinalPurchaseNonConsumableProduct);
 		});
 #endif // #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 	}
@@ -326,25 +326,27 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	private void OnInit(Task a_oTask) {
 		CFunc.ShowLog($"CPurchaseManager.OnInit: {a_oTask.ExIsCompleteSuccess()}", KCDefine.B_LOG_COLOR_PLUGIN);
 
-		// 초기화되었을 경우
-		if(a_oTask.ExIsCompleteSuccess()) {
-			var oProductDefinitionList = new List<ProductDefinition>();
-			
-			for(int i = 0; i < this.Params.m_oProductInfoList.Count; ++i) {
-				CFunc.ShowLog($"CPurchaseManager.OnInit: {this.Params.m_oProductInfoList[i].m_oID}, {this.Params.m_oProductInfoList[i].m_eProductType}");
-
-				CAccess.Assert(this.Params.m_oProductInfoList[i].m_oID.ExIsValid() && 
-					this.Params.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
-
-				var oProductDefinition = new ProductDefinition(this.Params.m_oProductInfoList[i].m_oID, 
-					this.Params.m_oProductInfoList[i].m_eProductType);
-
-				oProductDefinitionList.ExAddVal(oProductDefinition);
-			}
-
-			var oModule = StandardPurchasingModule.Instance();
-			UnityPurchasing.Initialize(this, ConfigurationBuilder.Instance(oModule).AddProducts(oProductDefinitionList));
+		// 초기화 되지 않았을 경우
+		if(!a_oTask.ExIsCompleteSuccess()) {
+			return;
 		}
+
+		var oProductDefinitionList = new List<ProductDefinition>();
+		
+		for(int i = 0; i < this.Params.m_oProductInfoList.Count; ++i) {
+			CFunc.ShowLog($"CPurchaseManager.OnInit: {this.Params.m_oProductInfoList[i].m_oID}, {this.Params.m_oProductInfoList[i].m_eProductType}");
+
+			CAccess.Assert(this.Params.m_oProductInfoList[i].m_oID.ExIsValid() && 
+				this.Params.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
+
+			var oProductDefinition = new ProductDefinition(this.Params.m_oProductInfoList[i].m_oID, 
+				this.Params.m_oProductInfoList[i].m_eProductType);
+
+			oProductDefinitionList.ExAddVal(oProductDefinition);
+		}
+
+		var oModule = StandardPurchasingModule.Instance();
+		UnityPurchasing.Initialize(this, ConfigurationBuilder.Instance(oModule).AddProducts(oProductDefinitionList));
 	}
 
 	/** 상품이 복원되었을 경우 */
