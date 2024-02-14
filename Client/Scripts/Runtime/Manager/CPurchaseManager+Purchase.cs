@@ -78,7 +78,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		CFunc.ShowLogWarning($"CPurchaseManager.OnPurchaseFailed: {a_oProduct.definition.id}, {a_oDesc.reason}, {a_oDesc.message}");
 
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_PURCHASE_FAIL_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_PURCHASE_FAIL_CALLBACK, () => {
 			bool bIsPurchaseProductA = this.IsPurchaseNonConsumableProduct(a_oProduct);
 			bool bIsPurchaseProductB = a_oDesc.reason == PurchaseFailureReason.DuplicateTransaction;
 
@@ -140,7 +140,7 @@ PURCHASE_MANAGER_RESTORE_PRODUCTS_EXIT:
 		if(bIsPurchaseProductA || bIsPurchaseProductB) {
 			this.HandlePurchaseResult(a_oID, true);
 		} else {
-			m_oStoreController.InitiatePurchase(oProduct, KCDefine.U_PAYLOAD_PURCHASE_M_PURCHASE_PRODUCT);
+			m_oStoreController.InitiatePurchase(oProduct, KCDefine.B_PAYLOAD_PURCHASE_M_PURCHASE_PRODUCT);
 		}
 
 		return;
@@ -155,7 +155,7 @@ PURCHASE_MANAGER_PURCHASE_PRODUCT_EXIT:
 		CFunc.ShowLog($"CPurchaseManager.ConfirmPurchase: {a_oID}", KCDefine.B_LOG_COLOR_PLUGIN);
 		CAccess.Assert(a_oID.ExIsValid());
 
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_CONFIRM_PURCHASE_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_CONFIRM_PURCHASE_CALLBACK, () => {
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 			var oProduct = this.GetProduct(a_oID);
 			bool bIsEnableConfirm = this.IsInit && m_bIsPurchasing && (oProduct != null && oProduct.availableToPurchase);
@@ -205,7 +205,7 @@ PURCHASE_MANAGER_REJECT_PURCHASE_EXIT:
 	private void OnRestoreProducts(bool a_bIsSuccess) {
 		CFunc.ShowLog($"CPurchaseManager.OnRestoreProducts: {a_bIsSuccess}", KCDefine.B_LOG_COLOR_PLUGIN);
 
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_RESTORE_PRODUCTS_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_RESTORE_PRODUCTS_CALLBACK, () => {
 			var oProductList = new List<Product>();
 
 			// 상품 복원에 실패했을 경우
@@ -235,7 +235,7 @@ PURCHASE_MANAGER_ON_RESTORE_PRODUCTS_EXIT:
 		CFunc.ShowLog($"CPurchaseManager.HandlePurchaseResult: {a_oProductID}, {a_bIsSuccess}, {a_bIsInvoke}, {a_bIsComplete}", KCDefine.B_LOG_COLOR_PLUGIN);
 		CAccess.Assert(a_oProductID.ExIsValid());
 
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_HANDLE_PURCHASE_RESULT_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_HANDLE_PURCHASE_RESULT_CALLBACK, () => {
 			// 완료 모드 일 경우
 			if(a_bIsComplete) {
 				m_bIsPurchasing = false;
