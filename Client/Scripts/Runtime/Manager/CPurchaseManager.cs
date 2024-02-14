@@ -67,7 +67,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		CFunc.ShowLog("CPurchaseManager.OnInitialized", KCDefine.B_LOG_COLOR_PLUGIN);
 
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_INIT_CALLBACK, () => {
 			m_oStoreController = a_oStoreController;
 			m_oExtensionProvider = a_oExtensionProvider;
 
@@ -92,7 +92,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		CFunc.ShowLogWarning($"CPurchaseManager.OnInitializeFailed: {a_eReason}, {a_oMsg}");
 
-		CScheduleManager.Inst.AddCallback(KCDefine.U_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
 			this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, false);
 		});
 #endif // #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
@@ -106,7 +106,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		// 결제 상품 식별자 파일이 없을 경우
-		if(!File.Exists(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS)) {
+		if(!File.Exists(KCDefine.B_DATA_P_PURCHASE_PRODUCT_IDS)) {
 			return;
 		}
 
@@ -129,9 +129,9 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		this.Params = a_stParams;
 
 #if DEBUG || DEVELOPMENT_BUILD
-		string oEnvironmentName = KCDefine.U_ENVIRONMENT_N_DEV;
+		string oEnvironmentName = KCDefine.B_ENVIRONMENT_N_DEV;
 #else
-		string oEnvironmentName = KCDefine.U_ENVIRONMENT_N_PRODUCTION;
+		string oEnvironmentName = KCDefine.B_ENVIRONMENT_N_PRODUCTION;
 #endif // #if DEBUG || DEVELOPMENT_BUILD
 
 		var oInitOpts = new InitializationOptions();
@@ -193,12 +193,12 @@ PURCHASE_MANAGER_ON_INIT_EXIT:
 
 	/** 결제 상품 식별자를 로드한다 */
 	private List<string> LoadPurchaseProductIDs() {
-		return CFunc.ReadMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, true);
+		return CFunc.ReadMsgPackObj<List<string>>(KCDefine.B_DATA_P_PURCHASE_PRODUCT_IDS, true);
 	}
 
 	/** 결제 상품 식별자를 저장한다 */
 	private void SavePurchaseProductIDs(List<string> a_oPurchaseProductIDList) {
-		CFunc.WriteMsgPackObj<List<string>>(KCDefine.U_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList, true);
+		CFunc.WriteMsgPackObj<List<string>>(KCDefine.B_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList, true);
 	}
 #endif // #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 	#endregion // 함수
