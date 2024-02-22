@@ -77,7 +77,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #endif // #if UNITY_EDITOR && (DEBUG || DEVELOPMENT_BUILD)
 
 			this.IsInit = true;
-			this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
+			this.Params.m_oCallbackDict?.ExGetVal(ECallback.INIT)?.Invoke(this, this.IsInit);
 		});
 #endif // #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 	}
@@ -93,7 +93,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		CFunc.ShowLogWarning($"CPurchaseManager.OnInitializeFailed: {a_eReason}, {a_oMsg}");
 
 		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
-			this.Params.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, false);
+			this.Params.m_oCallbackDict?.ExGetVal(ECallback.INIT)?.Invoke(this, false);
 		});
 #endif // #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 	}
@@ -142,7 +142,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 #endif // #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 
 PURCHASE_MANAGER_INIT_EXIT:
-		a_stParams.m_oCallbackDict?.GetValueOrDefault(ECallback.INIT)?.Invoke(this, this.IsInit);
+		a_stParams.m_oCallbackDict?.ExGetVal(ECallback.INIT)?.Invoke(this, this.IsInit);
 	}
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
