@@ -119,7 +119,7 @@ PURCHASE_MANAGER_RESTORE_PRODUCTS_EXIT:
 	/** 상품을 결제한다 */
 	public void PurchaseProduct(string a_oID, System.Action<CPurchaseManager, string, bool> a_oCallback) {
 		CFunc.ShowLog($"CPurchaseManager.PurchaseProduct: {a_oID}", KCDefine.B_LOG_COLOR_PLUGIN);
-		CAccess.Assert(a_oID.ExIsValid());
+		CFunc.Assert(a_oID.ExIsValid());
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		var oProduct = this.GetProduct(a_oID);
@@ -153,7 +153,7 @@ PURCHASE_MANAGER_PURCHASE_PRODUCT_EXIT:
 	/** 결제를 확정한다 */
 	public void ConfirmPurchase(string a_oID, System.Action<CPurchaseManager, string, bool> a_oCallback) {
 		CFunc.ShowLog($"CPurchaseManager.ConfirmPurchase: {a_oID}", KCDefine.B_LOG_COLOR_PLUGIN);
-		CAccess.Assert(a_oID.ExIsValid());
+		CFunc.Assert(a_oID.ExIsValid());
 
 		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_CONFIRM_PURCHASE_CALLBACK, () => {
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
@@ -179,7 +179,7 @@ PURCHASE_MANAGER_CONFIRM_PURCHASE_EXIT:
 	/** 결제를 거부한다 */
 	public void RejectPurchase(string a_oID, System.Action<CPurchaseManager, string, bool> a_oCallback) {
 		CFunc.ShowLog($"CPurchaseManager.RejectPurchase: {a_oID}", KCDefine.B_LOG_COLOR_PLUGIN);
-		CAccess.Assert(a_oID.ExIsValid());
+		CFunc.Assert(a_oID.ExIsValid());
 
 		this.ConfirmPurchase(a_oID, (a_oSender, a_oProductID, a_bIsSuccess) => {
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
@@ -233,7 +233,7 @@ PURCHASE_MANAGER_ON_RESTORE_PRODUCTS_EXIT:
 		bool a_bIsSuccess, bool a_bIsInvoke = true, bool a_bIsComplete = false) {
 
 		CFunc.ShowLog($"CPurchaseManager.HandlePurchaseResult: {a_oProductID}, {a_bIsSuccess}, {a_bIsInvoke}, {a_bIsComplete}", KCDefine.B_LOG_COLOR_PLUGIN);
-		CAccess.Assert(a_oProductID.ExIsValid());
+		CFunc.Assert(a_oProductID.ExIsValid());
 
 		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_HANDLE_PURCHASE_RESULT_CALLBACK, () => {
 			// 완료 모드 일 경우
