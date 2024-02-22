@@ -118,7 +118,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	/** 초기화 */
 	public virtual void Init(STParams a_stParams) {
 		CFunc.ShowLog($"CPurchaseManager.Init: {a_stParams.m_oProductInfoList}", KCDefine.B_LOG_COLOR_PLUGIN);
-		CAccess.Assert(a_stParams.m_oProductInfoList != null);
+		CFunc.Assert(a_stParams.m_oProductInfoList != null);
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		// 초기화되었을 경우
@@ -160,7 +160,7 @@ PURCHASE_MANAGER_INIT_EXIT:
 		for(int i = 0; i < this.Params.m_oProductInfoList.Count; ++i) {
 			CFunc.ShowLog($"CPurchaseManager.OnInit: {this.Params.m_oProductInfoList[i].m_oID}, {this.Params.m_oProductInfoList[i].m_eProductType}");
 
-			CAccess.Assert(this.Params.m_oProductInfoList[i].m_oID.ExIsValid() && 
+			CFunc.Assert(this.Params.m_oProductInfoList[i].m_oID.ExIsValid() && 
 				this.Params.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
 
 			var oProductDefinition = new ProductDefinition(this.Params.m_oProductInfoList[i].m_oID, 
@@ -206,7 +206,7 @@ PURCHASE_MANAGER_ON_INIT_EXIT:
 	#region 접근 함수
 	/** 비소모 상품 결제 여부를 검사한다 */
 	public bool IsPurchaseNonConsumableProduct(string a_oProductID) {
-		CAccess.Assert(a_oProductID.ExIsValid());
+		CFunc.Assert(a_oProductID.ExIsValid());
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		var oProduct = this.GetProduct(a_oProductID);
@@ -218,7 +218,7 @@ PURCHASE_MANAGER_ON_INIT_EXIT:
 
 	/** 비소모 상품 결제 여부를 검사한다 */
 	public bool IsPurchaseNonConsumableProduct(Product a_oProduct) {
-		CAccess.Assert(a_oProduct != null);
+		CFunc.Assert(a_oProduct != null);
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		return this.IsInit && a_oProduct.hasReceipt && a_oProduct.definition.type == ProductType.NonConsumable;
@@ -229,7 +229,7 @@ PURCHASE_MANAGER_ON_INIT_EXIT:
 
 	/** 상품을 반환한다 */
 	public Product GetProduct(string a_oProductID) {
-		CAccess.Assert(a_oProductID.ExIsValid());
+		CFunc.Assert(a_oProductID.ExIsValid());
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		return this.IsInit ? m_oStoreController.products.WithID(a_oProductID) : null;
