@@ -231,7 +231,6 @@ PURCHASE_MANAGER_ON_RESTORE_PRODUCTS_EXIT:
 	/** 결제 결과를 처리한다 */
 	private void HandlePurchaseResult(string a_oProductID, 
 		bool a_bIsSuccess, bool a_bIsInvoke = true, bool a_bIsComplete = false) {
-
 		CFunc.ShowLog($"CPurchaseManager.HandlePurchaseResult: {a_oProductID}, {a_bIsSuccess}, {a_bIsInvoke}, {a_bIsComplete}", KCDefine.B_LOG_COLOR_PLUGIN);
 		CFunc.Assert(a_oProductID.ExIsValid());
 
