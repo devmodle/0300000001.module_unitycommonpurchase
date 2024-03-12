@@ -22,16 +22,19 @@ using UnityEditor.Purchasing;
 #endif // #if UNITY_EDITOR
 
 /** 인앱 결제 관리자 */
-public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener, IDetailedStoreListener {
+public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreListener, IDetailedStoreListener
+{
 	/** 콜백 */
-	public enum ECallback {
+	public enum ECallback
+	{
 		NONE = -1,
 		INIT,
 		[HideInInspector] MAX_VAL
 	}
 
 	/** 결제 콜백 */
-	private enum EPurchaseCallback {
+	private enum EPurchaseCallback
+	{
 		NONE = -1,
 		RESTORE,
 		PURCHASE,
@@ -39,7 +42,8 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 	/** 매개 변수 */
-	public struct STParams {
+	public struct STParams
+	{
 		public List<STProductInfo> m_oProductInfoList;
 		public Dictionary<ECallback, System.Action<CPurchaseManager, bool>> m_oCallbackDict;
 	}
@@ -63,11 +67,13 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	#region IStoreListener
 	/** 초기화되었을 경우 */
-	public virtual void OnInitialized(IStoreController a_oStoreController, IExtensionProvider a_oExtensionProvider) {
+	public virtual void OnInitialized(IStoreController a_oStoreController, IExtensionProvider a_oExtensionProvider)
+	{
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		CFunc.ShowLog("CPurchaseManager.OnInitialized", KCDefine.B_LOG_COLOR_PLUGIN);
 
-		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_INIT_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_INIT_CALLBACK, () =>
+		{
 			m_oStoreController = a_oStoreController;
 			m_oExtensionProvider = a_oExtensionProvider;
 
@@ -83,16 +89,19 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 	/** 초기화에 실패했을 경우 */
-	public virtual void OnInitializeFailed(InitializationFailureReason a_eReason) {
+	public virtual void OnInitializeFailed(InitializationFailureReason a_eReason)
+	{
 		this.OnInitializeFailed(a_eReason, string.Empty);
 	}
 
 	/** 초기화에 실패했을 경우 */
-	public virtual void OnInitializeFailed(InitializationFailureReason a_eReason, string? a_oMsg) {
+	public virtual void OnInitializeFailed(InitializationFailureReason a_eReason, string? a_oMsg)
+	{
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		CFunc.ShowLogWarning($"CPurchaseManager.OnInitializeFailed: {a_eReason}, {a_oMsg}");
 
-		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () => {
+		CScheduleManager.Inst.AddCallback(KCDefine.B_KEY_PURCHASE_M_INIT_FAIL_CALLBACK, () =>
+		{
 			this.Params.m_oCallbackDict?.ExGetVal(ECallback.INIT)?.Invoke(this, false);
 		});
 #endif // #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
@@ -101,12 +110,14 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 
 	#region 함수
 	/** 초기화 */
-	public override void Awake() {
+	public override void Awake()
+	{
 		base.Awake();
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		// 결제 상품 식별자 파일이 없을 경우
-		if(!File.Exists(KCDefine.B_DATA_P_PURCHASE_PRODUCT_IDS)) {
+		if(!File.Exists(KCDefine.B_DATA_P_PURCHASE_PRODUCT_IDS))
+		{
 			return;
 		}
 
@@ -116,13 +127,15 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 	}
 
 	/** 초기화 */
-	public virtual void Init(STParams a_stParams) {
+	public virtual void Init(STParams a_stParams)
+	{
 		CFunc.ShowLog($"CPurchaseManager.Init: {a_stParams.m_oProductInfoList}", KCDefine.B_LOG_COLOR_PLUGIN);
 		CFunc.Assert(a_stParams.m_oProductInfoList != null);
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 		// 초기화되었을 경우
-		if(this.IsInit) {
+		if(this.IsInit)
+		{
 			goto PURCHASE_MANAGER_INIT_EXIT;
 		}
 
@@ -147,23 +160,26 @@ PURCHASE_MANAGER_INIT_EXIT:
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 	/** 초기화되었을 경우 */
-	private void OnInit(Task a_oTask) {
+	private void OnInit(Task a_oTask)
+	{
 		CFunc.ShowLog($"CPurchaseManager.OnInit: {a_oTask.ExIsCompleteSuccess()}", KCDefine.B_LOG_COLOR_PLUGIN);
 
 		// 초기화에 실패했을 경우
-		if(!a_oTask.ExIsCompleteSuccess()) {
+		if(!a_oTask.ExIsCompleteSuccess())
+		{
 			goto PURCHASE_MANAGER_ON_INIT_EXIT;
 		}
 
 		var oProductDefinitionList = new List<ProductDefinition>();
-		
-		for(int i = 0; i < this.Params.m_oProductInfoList.Count; ++i) {
+
+		for(int i = 0; i < this.Params.m_oProductInfoList.Count; ++i)
+		{
 			CFunc.ShowLog($"CPurchaseManager.OnInit: {this.Params.m_oProductInfoList[i].m_oID}, {this.Params.m_oProductInfoList[i].m_eProductType}");
 
-			CFunc.Assert(this.Params.m_oProductInfoList[i].m_oID.ExIsValid() && 
+			CFunc.Assert(this.Params.m_oProductInfoList[i].m_oID.ExIsValid() &&
 				this.Params.m_oProductInfoList[i].m_eProductType != ProductType.Subscription);
 
-			var oProductDefinition = new ProductDefinition(this.Params.m_oProductInfoList[i].m_oID, 
+			var oProductDefinition = new ProductDefinition(this.Params.m_oProductInfoList[i].m_oID,
 				this.Params.m_oProductInfoList[i].m_eProductType);
 
 			oProductDefinitionList.ExAddVal(oProductDefinition);
@@ -180,24 +196,28 @@ PURCHASE_MANAGER_ON_INIT_EXIT:
 	}
 
 	/** 결제 상품 식별자를 추가한다 */
-	private void AddPurchaseProductID(string a_oID) {
+	private void AddPurchaseProductID(string a_oID)
+	{
 		m_oPurchaseProductIDList.ExAddVal(a_oID);
 		this.SavePurchaseProductIDs(m_oPurchaseProductIDList);
 	}
 
 	/** 결제 상품 식별자를 제거한다 */
-	private void RemovePurchaseProductID(string a_oID) {
+	private void RemovePurchaseProductID(string a_oID)
+	{
 		m_oPurchaseProductIDList.ExRemoveVal(a_oID);
 		this.SavePurchaseProductIDs(m_oPurchaseProductIDList);
 	}
 
 	/** 결제 상품 식별자를 로드한다 */
-	private List<string> LoadPurchaseProductIDs() {
+	private List<string> LoadPurchaseProductIDs()
+	{
 		return CFunc.ReadMsgPackObj<List<string>>(KCDefine.B_DATA_P_PURCHASE_PRODUCT_IDS, true);
 	}
 
 	/** 결제 상품 식별자를 저장한다 */
-	private void SavePurchaseProductIDs(List<string> a_oPurchaseProductIDList) {
+	private void SavePurchaseProductIDs(List<string> a_oPurchaseProductIDList)
+	{
 		CFunc.WriteMsgPackObj<List<string>>(KCDefine.B_DATA_P_PURCHASE_PRODUCT_IDS, a_oPurchaseProductIDList, true);
 	}
 #endif // #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
@@ -205,7 +225,8 @@ PURCHASE_MANAGER_ON_INIT_EXIT:
 
 	#region 접근 함수
 	/** 비소모 상품 결제 여부를 검사한다 */
-	public bool IsPurchaseNonConsumableProduct(string a_oProductID) {
+	public bool IsPurchaseNonConsumableProduct(string a_oProductID)
+	{
 		CFunc.Assert(a_oProductID.ExIsValid());
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
@@ -217,7 +238,8 @@ PURCHASE_MANAGER_ON_INIT_EXIT:
 	}
 
 	/** 비소모 상품 결제 여부를 검사한다 */
-	public bool IsPurchaseNonConsumableProduct(Product a_oProduct) {
+	public bool IsPurchaseNonConsumableProduct(Product a_oProduct)
+	{
 		CFunc.Assert(a_oProduct != null);
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
@@ -228,7 +250,8 @@ PURCHASE_MANAGER_ON_INIT_EXIT:
 	}
 
 	/** 상품을 반환한다 */
-	public Product GetProduct(string a_oProductID) {
+	public Product GetProduct(string a_oProductID)
+	{
 		CFunc.Assert(a_oProductID.ExIsValid());
 
 #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
@@ -255,9 +278,11 @@ PURCHASE_MANAGER_ON_INIT_EXIT:
 
 	#region 클래스 팩토리 함수
 	/** 매개 변수를 생성한다 */
-	public static STParams MakeParams(List<STProductInfo> a_oProductInfoList, 
-		Dictionary<ECallback, System.Action<CPurchaseManager, bool>> a_oCallbackDict = null) {
-		return new STParams() {
+	public static STParams MakeParams(List<STProductInfo> a_oProductInfoList,
+		Dictionary<ECallback, System.Action<CPurchaseManager, bool>> a_oCallbackDict = null)
+	{
+		return new STParams()
+		{
 			m_oProductInfoList = a_oProductInfoList,
 			m_oCallbackDict = a_oCallbackDict ?? new Dictionary<ECallback, System.Action<CPurchaseManager, bool>>()
 		};
