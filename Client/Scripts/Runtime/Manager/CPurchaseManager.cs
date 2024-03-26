@@ -109,7 +109,7 @@ public partial class CPurchaseManager : CSingleton<CPurchaseManager>, IStoreList
 		var oInitOpts = new InitializationOptions();
 		var oAsyncTask = UnityServices.InitializeAsync(oInitOpts.SetEnvironmentName(oEnvironmentName));
 
-		CTaskManager.Inst.WaitAsyncTask(oAsyncTask, this.OnInit);
+		CManagerTask.Inst.WaitAsyncTask(oAsyncTask, this.OnInit);
 		return;
 #endif // #if UNITY_EDITOR || UNITY_IOS || UNITY_ANDROID
 
