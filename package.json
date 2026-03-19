@@ -1,18 +1,18 @@
 {
   "name": "module.unitycommonpurchase",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "displayName": "Module.UnityCommonPurchase",
   "author": {
     "name": "dante",
     "email": "are2341@nate.com"
   },
   "dependencies": {
-	"module.unitycommondefine": "https://github.com/devmodle/0300000001.module_unitycommondefine.git#4.1.0",
-    "module.unitycommonaccess": "https://github.com/devmodle/0300000001.module_unitycommonaccess.git#4.1.0",
-    "module.unitycommonfactory": "https://github.com/devmodle/0300000001.module_unitycommonfactory.git#4.1.0",
-    "module.unitycommonextension": "https://github.com/devmodle/0300000001.module_unitycommonextension.git#4.1.0",
-	"module.unitycommonfunction": "https://github.com/devmodle/0300000001.module_unitycommonfunction.git#4.1.0",
-	"module.unitycommonutility": "https://github.com/devmodle/0300000001.module_unitycommonutility.git#4.1.0",
-    "module.unitycommonexternals": "https://github.com/devmodle/0300000001.module_unitycommonexternals.git#4.1.0"
+    "module.unitycommondefine": "https://github.com/devmodle/0300000001.module_unitycommondefine.git#4.1.1",
+    "module.unitycommonaccess": "https://github.com/devmodle/0300000001.module_unitycommonaccess.git#4.1.1",
+    "module.unitycommonfactory": "https://github.com/devmodle/0300000001.module_unitycommonfactory.git#4.1.1",
+    "module.unitycommonextension": "https://github.com/devmodle/0300000001.module_unitycommonextension.git#4.1.1",
+    "module.unitycommonfunction": "https://github.com/devmodle/0300000001.module_unitycommonfunction.git#4.1.1",
+    "module.unitycommonutility": "https://github.com/devmodle/0300000001.module_unitycommonutility.git#4.1.1",
+    "module.unitycommonexternals": "https://github.com/devmodle/0300000001.module_unitycommonexternals.git#4.1.1"
   }
 }
